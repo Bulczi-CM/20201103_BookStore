@@ -23,6 +23,7 @@ namespace BookStore
                 Console.WriteLine("Press 1 to Add book");
                 Console.WriteLine("Press 2 to Print books");
                 Console.WriteLine("Press 3 to Change stock for book");
+                Console.WriteLine("Press 4 to Sell book");
 
                 int userChoice = _ioHelper.GetIntFromUser("Select option");
 
@@ -37,54 +38,15 @@ namespace BookStore
                     case 3:
                         ChangeStockForBook();
                         break;
+                    case 4:
+                        SellBook();
+                        break;
                     default:
                         Console.WriteLine("Unknown option");
                         break;
                 }
             }
             while (true);
-        }
-
-        private void PrintAllBooks()
-        {
-            PrintBooks(_booksService.GetAllBooks());
-        }
-
-        private void ChangeStockForBook()
-        {
-            List<Book> books = _booksService.GetAllBooks();
-
-            PrintBooks(books, true);
-
-            int index = _ioHelper.GetIntFromUser("Select book id");
-            uint quantity = _ioHelper.GetUintFromUser("Enter new copies count");
-
-            bool success = _booksService.UpdateBookQuantity(index - 1, quantity);
-            Console.WriteLine(success ? "Book added successfully" : "Book not added");
-
-            //Ternary if
-            //https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/operators/conditional-operator
-            //uint i = GetUintFromUser("Provide some number");
-            //string message = i > 1000
-            //    ? "Number is larger than 1000"
-            //    : "Number is smaller or equal 1000";
-        }
-
-        private void PrintBooks(List<Book> books, bool printIndex = false)
-        {
-            for (int i = 0; i < books.Count; i++)
-            {
-                Book book = books[i];
-
-                if(printIndex)
-                {
-                    _ioHelper.PrintBook(book, i + 1);
-                }
-                else
-                {
-                    _ioHelper.PrintBook(book);
-                }
-            }
         }
 
         void AddBook()
@@ -107,6 +69,63 @@ namespace BookStore
 
             _booksService.AddBook(newBook);
             Console.WriteLine("Book added successfully");
+        }
+
+        private void PrintAllBooks()
+        {
+            PrintBooks(_booksService.GetAllBooks());
+        }
+
+        private void PrintBooks(List<Book> books, bool printIndex = false)
+        {
+            for (int i = 0; i < books.Count; i++)
+            {
+                Book book = books[i];
+
+                if (printIndex)
+                {
+                    _ioHelper.PrintBook(book, i + 1);
+                }
+                else
+                {
+                    _ioHelper.PrintBook(book);
+                }
+            }
+        }
+
+        private void ChangeStockForBook()
+        {
+            int index = GetBookIndexFromUser();
+            uint quantity = _ioHelper.GetUintFromUser("Enter new copies count");
+
+            bool success = _booksService.UpdateBookQuantity(index - 1, quantity);
+            Console.WriteLine(success ? "Book added successfully" : "Book not added");
+
+            //Ternary if
+            //https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/operators/conditional-operator
+            //uint i = GetUintFromUser("Provide some number");
+            //string message = i > 1000
+            //    ? "Number is larger than 1000"
+            //    : "Number is smaller or equal 1000";
+        }
+
+        private int GetBookIndexFromUser()
+        {
+            List<Book> books = _booksService.GetAllBooks();
+
+            PrintBooks(books, true);
+
+            int index = _ioHelper.GetIntFromUser("Select book id");
+            return index;
+        }
+
+        private void SellBook()
+        {
+            int index = GetBookIndexFromUser();
+
+            float cost = _booksService.SellBook(index - 1);
+
+            Console.WriteLine($"Recipt: ${cost}");
         }
     }
 }

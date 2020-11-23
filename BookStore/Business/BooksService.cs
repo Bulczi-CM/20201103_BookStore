@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace BookStore.Business
@@ -20,14 +19,39 @@ namespace BookStore.Business
 
         public bool UpdateBookQuantity(int bookId, uint quantity)
         {
-            if(_stock.Books.Count >= bookId + 1)
+            var book = GetBook(bookId);
+
+            if(book == null)
             {
                 return false;
             }
 
-            Book book = _stock.Books[bookId];
             book.CopiesCount = quantity;
             return true;
+        }
+
+        private Book GetBook(int bookId)
+        {
+            if (_stock.Books.Count <= bookId)
+            {
+                return null;
+            }
+
+            Book book = _stock.Books[bookId];
+            return book;
+        }
+
+        public float SellBook(int bookId)
+        {
+            var book = GetBook(bookId);
+
+            if (book == null || !book.IsAvailable)
+            {
+                return 0.0f;
+            }
+
+            book.CopiesCount--;
+            return book.Price;
         }
     }
 }
