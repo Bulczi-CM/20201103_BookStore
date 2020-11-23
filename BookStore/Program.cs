@@ -1,17 +1,18 @@
-﻿using System;
+﻿using BookStore.Business;
+using System;
 using System.Collections.Generic;
-using System.Globalization;
 
 namespace BookStore
 {
     class Program
     {
+        private IoHelper _ioHelper = new IoHelper();
+        private BooksService _booksService = new BooksService();
+
         static void Main(string[] args)
         {
             new Program().Run();
         }
-
-        private Stock _stock = new Stock();
 
         void Run()
         {
@@ -23,7 +24,7 @@ namespace BookStore
                 Console.WriteLine("Press 2 to Print books");
                 Console.WriteLine("Press 3 to Change stock for book");
 
-                int userChoice = GetIntFromUser("Select option");
+                int userChoice = _ioHelper.GetIntFromUser("Select option");
 
                 switch (userChoice)
                 {
@@ -46,25 +47,27 @@ namespace BookStore
 
         private void PrintAllBooks()
         {
-            PrintBooks(_stock.GetAllBooks());
+            PrintBooks(_booksService.GetAllBooks());
         }
 
         private void ChangeStockForBook()
         {
-            List<Book> books = _stock.GetAllBooks();
+            List<Book> books = _booksService.GetAllBooks();
 
             PrintBooks(books, true);
 
-            int index = GetIntFromUser("Select book id");
+            int index = _ioHelper.GetIntFromUser("Select book id");
+            uint quantity = _ioHelper.GetUintFromUser("Enter new copies count");
 
-            while (index < 1 || index > books.Count)
-            {
-                Console.WriteLine("Invalid index - try again...");
-                index = GetIntFromUser("Select book id");
-            }
+            bool success = _booksService.UpdateBookQuantity(index - 1, quantity);
+            Console.WriteLine(success ? "Book added successfully" : "Book not added");
 
-            Book book = books[index - 1];
-            book.CopiesCount = GetUintFromUser($"Enter new copies count (current: {book.CopiesCount})");
+            //Ternary if
+            //https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/operators/conditional-operator
+            //uint i = GetUintFromUser("Provide some number");
+            //string message = i > 1000
+            //    ? "Number is larger than 1000"
+            //    : "Number is smaller or equal 1000";
         }
 
         private void PrintBooks(List<Book> books, bool printIndex = false)
@@ -73,14 +76,14 @@ namespace BookStore
             {
                 Book book = books[i];
 
-                string text = $"{book.Author} - {book.Title} ({book.PublishDate.Year}): {book.Price} (Av. copies: {book.CopiesCount})";
-
                 if(printIndex)
                 {
-                    text = $"{i + 1}. {text}";
+                    _ioHelper.PrintBook(book, i + 1);
                 }
-
-                Console.WriteLine(text);
+                else
+                {
+                    _ioHelper.PrintBook(book);
+                }
             }
         }
 
@@ -90,93 +93,20 @@ namespace BookStore
 
             Book newBook = new Book()
             {
-                Author = GetTextFromUser("Enter author"),
-                Title = GetTextFromUser("Enter title"),
-                Description = GetTextFromUser("Enter description"),
-                Genre = GetTextFromUser("Enter genre"),
-                HardCover = GetBoolFromUser("Is in hard cover"),
-                PagesCount = GetUintFromUser("Enter pages count"),
-                Price = GetFloatFromUser("Enter price"),
-                PublishDate = GetDateTimeFromUser("Publish date"),
-                Publisher = GetTextFromUser("Enter publisher"),
-                CopiesCount = GetUintFromUser("Enter amount of copies")
+                Author =      _ioHelper.GetTextFromUser("Enter author"),
+                Title =       _ioHelper.GetTextFromUser("Enter title"),
+                Description = _ioHelper.GetTextFromUser("Enter description"),
+                Genre =       _ioHelper.GetTextFromUser("Enter genre"),
+                HardCover =   _ioHelper.GetBoolFromUser("Is in hard cover"),
+                PagesCount =  _ioHelper.GetUintFromUser("Enter pages count"),
+                Price =       _ioHelper.GetFloatFromUser("Enter price"),
+                PublishDate = _ioHelper.GetDateTimeFromUser("Publish date"),
+                Publisher =   _ioHelper.GetTextFromUser("Enter publisher"),
+                CopiesCount = _ioHelper.GetUintFromUser("Enter amount of copies")
             };
 
-            _stock.AddBook(newBook);
+            _booksService.AddBook(newBook);
             Console.WriteLine("Book added successfully");
-        }
-
-        string GetTextFromUser(string message)
-        {
-            Console.Write($"{message}: ");
-            return Console.ReadLine();
-        }
-
-        uint GetUintFromUser(string message)
-        {
-            uint result;
-
-            while(!uint.TryParse(GetTextFromUser(message), out result))
-            {
-                Console.WriteLine("Not an unsinged integer. Try again...");
-            }
-
-            return result;
-        }
-
-        float GetFloatFromUser(string message)
-        {
-            //return float.Parse(GetTextFromUser(message));
-
-            float result;
-
-            while (!float.TryParse(GetTextFromUser(message), out result))
-            {
-                Console.WriteLine("Not an float. Try again...");
-            }
-
-            return result;
-        }
-
-        bool GetBoolFromUser(string message)
-        {
-            bool result;
-
-            while (!bool.TryParse(GetTextFromUser($"{message} [true/false]"), out result))
-            {
-                Console.WriteLine("Not an bool. Try again...");
-            }
-
-            return result;
-        }
-
-        private int GetIntFromUser(string message)
-        {
-            int number;
-            while (!int.TryParse(GetTextFromUser(message), out number))
-            {
-                Console.WriteLine("Not na integer - try again...");
-            }
-
-            return number;
-        }
-
-        DateTime GetDateTimeFromUser(string message)
-        {
-            string format = "dd/MM/yyyy";
-            DateTime result;
-
-            while (!DateTime.TryParseExact(
-                GetTextFromUser($"{message} [{format}]"),
-                format,
-                CultureInfo.InvariantCulture,
-                DateTimeStyles.None,
-                out result))
-            {
-                Console.WriteLine("Not an valid date. Try again...");
-            }
-
-            return result;
         }
     }
 }
