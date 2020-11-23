@@ -23,7 +23,7 @@ namespace BookStore
                 Console.WriteLine("Press 1 to Add book");
                 Console.WriteLine("Press 2 to Print books");
                 Console.WriteLine("Press 3 to Change stock for book");
-                Console.WriteLine("Press 4 to Sell book");
+                Console.WriteLine("Press 4 to Sell books");
 
                 int userChoice = _ioHelper.GetIntFromUser("Select option");
 
@@ -39,7 +39,7 @@ namespace BookStore
                         ChangeStockForBook();
                         break;
                     case 4:
-                        SellBook();
+                        SellBooks();
                         break;
                     default:
                         Console.WriteLine("Unknown option");
@@ -98,7 +98,7 @@ namespace BookStore
             int index = GetBookIndexFromUser();
             uint quantity = _ioHelper.GetUintFromUser("Enter new copies count");
 
-            bool success = _booksService.UpdateBookQuantity(index - 1, quantity);
+            bool success = _booksService.UpdateBookQuantity(index, quantity);
             Console.WriteLine(success ? "Book added successfully" : "Book not added");
 
             //Ternary if
@@ -116,14 +116,32 @@ namespace BookStore
             PrintBooks(books, true);
 
             int index = _ioHelper.GetIntFromUser("Select book id");
-            return index;
+            return index - 1;
         }
 
-        private void SellBook()
+        private void SellBooks()
         {
-            int index = GetBookIndexFromUser();
+            bool exit = false;
+            Dictionary<int, uint> basket = new Dictionary<int, uint>();
 
-            float cost = _booksService.SellBook(index - 1);
+            while (!exit)
+            {
+                int index = GetBookIndexFromUser();
+                uint quantity = _ioHelper.GetUintFromUser("How many copies");
+
+                if (basket.ContainsKey(index))
+                {
+                    basket[index] += quantity;
+                }
+                else
+                {
+                    basket[index] = quantity;
+                }
+
+                exit = !_ioHelper.GetBoolFromUser("Do you want any other book?");
+            }
+
+            float cost = _booksService.SellBooks(basket);
 
             Console.WriteLine($"Recipt: ${cost}");
         }

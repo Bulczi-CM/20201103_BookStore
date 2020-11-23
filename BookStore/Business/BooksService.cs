@@ -41,17 +41,24 @@ namespace BookStore.Business
             return book;
         }
 
-        public float SellBook(int bookId)
+        public float SellBooks(Dictionary<int, uint> basket)
         {
-            var book = GetBook(bookId);
+            float cost = 0.0f;
 
-            if (book == null || !book.IsAvailable)
+            foreach(var item in basket)
             {
-                return 0.0f;
+                var book = GetBook(item.Key);
+
+                if (book == null || book.CopiesCount < item.Value)
+                {
+                    continue;
+                }
+
+                book.CopiesCount -= item.Value;
+                cost += book.Price * item.Value;
             }
 
-            book.CopiesCount--;
-            return book.Price;
+            return cost;
         }
     }
 }
