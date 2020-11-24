@@ -79,16 +79,6 @@ namespace BookStore
             return result;
         }
 
-        public void PrintBook(Book book, int index)
-        {
-            Console.WriteLine($"{index}. {BuildBookString(book)}");
-        }
-
-        public void PrintBook(Book book)
-        {
-            Console.WriteLine(BuildBookString(book));
-        }
-
         public BookGenre GetBookGenreFromUser(string message)
         {
             var correctValues = "";
@@ -99,7 +89,7 @@ namespace BookStore
             }
 
             object result;
-            while(!Enum.TryParse(typeof(BookGenre), GetTextFromUser($"{message} ({correctValues}):"), out result))
+            while (!Enum.TryParse(typeof(BookGenre), GetTextFromUser($"{message} ({correctValues}):"), out result))
             {
                 Console.WriteLine("Not a correct value - use one from the brackets. Try again...");
             }
@@ -107,9 +97,34 @@ namespace BookStore
             return (BookGenre)result;
         }
 
+        public void PrintBook(Book book, int index)
+        {
+            Console.WriteLine($"{index}. {BuildBookString(book)}");
+        }
+
+        public void PrintBook(Book book)
+        {
+            Console.WriteLine(BuildBookString(book));
+        }
+
         private string BuildBookString(Book book)
         {
             return $"{book.Author.Surname} - {book.Title} ({book.PublishDate.Year}): {book.Price} (Av. copies: {book.CopiesCount})";
+        }
+
+        public void PrintAuthor(Author author, int index)
+        {
+            Console.WriteLine($"{index}. {BuildAuthorString(author)}");
+        }
+
+        public void PrintAuthor(Author author)
+        {
+            Console.WriteLine(BuildAuthorString(author));
+        }
+
+        private string BuildAuthorString(Author author)
+        {
+            return $"{author.Surname} {author.Name} ({author.BirthDate})";
         }
     }
 }

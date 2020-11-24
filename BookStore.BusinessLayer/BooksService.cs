@@ -7,16 +7,14 @@ namespace BookStore.BusinessLayer
 {
     public class BooksService
     {
-        private Stock _stock = new Stock();
-
         public void AddBook(Book book)
         {
-            _stock.Books.Add(book);
+            Stock.Books.Add(book);
         }
 
         public List<Book> GetAllBooks()
         {
-            return _stock.Books.ToList();
+            return Stock.Books.ToList();
         }
 
         public bool UpdateBookQuantity(int bookId, uint quantity)
@@ -34,12 +32,12 @@ namespace BookStore.BusinessLayer
 
         private Book GetBook(int bookId)
         {
-            if (_stock.Books.Count <= bookId)
+            if (Stock.Books.Count <= bookId)
             {
                 return null;
             }
 
-            Book book = _stock.Books[bookId];
+            Book book = Stock.Books[bookId];
             return book;
         }
 

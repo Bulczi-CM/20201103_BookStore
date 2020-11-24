@@ -9,6 +9,7 @@ namespace BookStore
     {
         private IoHelper _ioHelper = new IoHelper();
         private BooksService _booksService = new BooksService();
+        private AuthorsService _authorsService = new AuthorsService();
 
         static void Main(string[] args)
         {
@@ -21,25 +22,29 @@ namespace BookStore
             {
                 Console.WriteLine();
                 Console.WriteLine("Choose action: ");
-                Console.WriteLine("Press 1 to Add book");
-                Console.WriteLine("Press 2 to Print books");
-                Console.WriteLine("Press 3 to Change stock for book");
-                Console.WriteLine("Press 4 to Sell books");
+                Console.WriteLine("Press 1 to Add Author");
+                Console.WriteLine("Press 2 to Add book");
+                Console.WriteLine("Press 3 to Print books");
+                Console.WriteLine("Press 4 to Change stock for book");
+                Console.WriteLine("Press 5 to Sell books");
 
                 int userChoice = _ioHelper.GetIntFromUser("Select option");
 
                 switch (userChoice)
                 {
                     case 1:
-                        AddBook();
+                        AddAuthor();
                         break;
                     case 2:
-                        PrintAllBooks();
+                        AddBook();
                         break;
                     case 3:
-                        ChangeStockForBook();
+                        PrintAllBooks();
                         break;
                     case 4:
+                        ChangeStockForBook();
+                        break;
+                    case 5:
                         SellBooks();
                         break;
                     default:
@@ -50,20 +55,56 @@ namespace BookStore
             while (true);
         }
 
+        void AddAuthor()
+        {
+            Console.WriteLine("Creating an author.");
+
+            var name    = _ioHelper.GetTextFromUser("Enter author name");
+            var surname = _ioHelper.GetTextFromUser("Enter author surname");
+
+            var bday    = _ioHelper.GetDateTimeFromUser("Enter author's bday date");
+            while (bday > DateTime.Now.AddYears(-18))
+            {
+                Console.WriteLine("Author is to young (18+). Try again...");
+                bday = _ioHelper.GetDateTimeFromUser("Enter author's bday date");
+            }
+
+            var newAuthor = new Author
+            {
+                Name = name,
+                Surname = surname,
+                BirthDate = bday
+            };
+
+            _authorsService.Add(newAuthor);
+            Console.WriteLine("Book added successfully");
+        }
+
         void AddBook()
         {
             Console.WriteLine("Creating a book.");
 
-            var author = new Author
+            var authors = _authorsService.GetAll();
+
+            if(authors.Count == 0)
             {
-                Name = _ioHelper.GetTextFromUser("Enter author name"),
-                Surname = _ioHelper.GetTextFromUser("Enter author surname"),
-                BirthDate = _ioHelper.GetDateTimeFromUser("Enter author's bday date"),
-            };
+                Console.WriteLine("There are no authors to choose from. Add them first!");
+                return;
+            }
+
+            PrintAuthors(authors, true);
+
+            int index = _ioHelper.GetIntFromUser("Select author id") - 1;
+
+            if (index >= authors.Count || index < 0)
+            {
+                Console.WriteLine("Incorrect author Id!");
+                return;
+            }
 
             var newBook = new Book()
             {
-                Author =      author,
+                Author =      authors[index],
                 Title =       _ioHelper.GetTextFromUser("Enter title"),
                 Description = _ioHelper.GetTextFromUser("Enter description"),
                 Genre =       _ioHelper.GetBookGenreFromUser("Enter genre"),
@@ -97,6 +138,23 @@ namespace BookStore
                 else
                 {
                     _ioHelper.PrintBook(book);
+                }
+            }
+        }
+
+        private void PrintAuthors(List<Author> authors, bool printIndex = false)
+        {
+            for (var i = 0; i < authors.Count; i++)
+            {
+                var author = authors[i];
+
+                if (printIndex)
+                {
+                    _ioHelper.PrintAuthor(author, i + 1);
+                }
+                else
+                {
+                    _ioHelper.PrintAuthor(author);
                 }
             }
         }

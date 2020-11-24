@@ -3,8 +3,9 @@ using System.Collections.Generic;
 
 namespace BookStore.DataLayer
 {
-    public class Stock
+    public static class Stock
     {
-        public List<Book> Books = new List<Book>();
+        public static List<Book> Books = new List<Book>();
+        public static List<Author> Authors = new List<Author>();
     }
 }
