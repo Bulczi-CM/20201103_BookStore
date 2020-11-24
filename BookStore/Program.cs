@@ -1,4 +1,5 @@
-﻿using BookStore.Business;
+﻿using BookStore.BusinessLayer;
+using BookStore.DataLayer.Models;
 using System;
 using System.Collections.Generic;
 
@@ -53,12 +54,12 @@ namespace BookStore
         {
             Console.WriteLine("Creating a book.");
 
-            Book newBook = new Book()
+            var newBook = new Book()
             {
                 Author =      _ioHelper.GetTextFromUser("Enter author"),
                 Title =       _ioHelper.GetTextFromUser("Enter title"),
                 Description = _ioHelper.GetTextFromUser("Enter description"),
-                Genre =       _ioHelper.GetTextFromUser("Enter genre"),
+                Genre =       _ioHelper.GetBookGenreFromUser("Enter genre"),
                 HardCover =   _ioHelper.GetBoolFromUser("Is in hard cover"),
                 PagesCount =  _ioHelper.GetUintFromUser("Enter pages count"),
                 Price =       _ioHelper.GetFloatFromUser("Enter price"),
@@ -78,9 +79,9 @@ namespace BookStore
 
         private void PrintBooks(List<Book> books, bool printIndex = false)
         {
-            for (int i = 0; i < books.Count; i++)
+            for (var i = 0; i < books.Count; i++)
             {
-                Book book = books[i];
+                var book = books[i];
 
                 if (printIndex)
                 {

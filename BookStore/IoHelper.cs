@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BookStore.DataLayer.Models;
+using System;
 using System.Globalization;
 
 namespace BookStore
@@ -86,6 +87,24 @@ namespace BookStore
         public void PrintBook(Book book)
         {
             Console.WriteLine(BuildBookString(book));
+        }
+
+        public BookGenre GetBookGenreFromUser(string message)
+        {
+            var correctValues = "";
+
+            foreach (var bookGenre in (BookGenre[])Enum.GetValues(typeof(BookGenre)))
+            {
+                correctValues += $"{bookGenre},";
+            }
+
+            object result;
+            while(!Enum.TryParse(typeof(BookGenre), GetTextFromUser($"{message} ({correctValues}):"), out result))
+            {
+                Console.WriteLine("Not a correct value - use one from the brackets. Try again...");
+            }
+
+            return (BookGenre)result;
         }
 
         private string BuildBookString(Book book)

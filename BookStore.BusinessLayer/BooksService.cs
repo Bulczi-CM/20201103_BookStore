@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using BookStore.DataLayer;
+using BookStore.DataLayer.Models;
+using System.Collections.Generic;
 using System.Linq;
 
-namespace BookStore.Business
+namespace BookStore.BusinessLayer
 {
     public class BooksService
     {
@@ -19,7 +21,7 @@ namespace BookStore.Business
 
         public bool UpdateBookQuantity(int bookId, uint quantity)
         {
-            var book = GetBook(bookId);
+            Book book = GetBook(bookId);
 
             if(book == null)
             {
@@ -45,9 +47,9 @@ namespace BookStore.Business
         {
             float cost = 0.0f;
 
-            foreach(var item in basket)
+            foreach(KeyValuePair<int, uint> item in basket)
             {
-                var book = GetBook(item.Key);
+                Book book = GetBook(item.Key);
 
                 if (book == null || book.CopiesCount < item.Value)
                 {

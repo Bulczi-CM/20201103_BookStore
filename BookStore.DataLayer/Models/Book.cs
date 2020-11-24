@@ -1,17 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace BookStore
+namespace BookStore.DataLayer.Models
 {
+    public enum BookGenre
+    {
+        Drama = 0,
+        SciFi = 1,
+        CrimeStory = 2,
+        Horror = 3,
+        Bio = 4
+    }
+
     public class Book
     {
+
         public string Author;
         public string Title;
         public bool HardCover;
         public string Description;
         public uint PagesCount;
-        public string Genre; //zamienic na enum potem
+        public BookGenre Genre; //zamienic na enum potem
         public DateTime PublishDate;
         public string Publisher;
         public float Price;
