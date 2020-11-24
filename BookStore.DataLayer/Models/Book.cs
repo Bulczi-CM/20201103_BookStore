@@ -14,7 +14,7 @@ namespace BookStore.DataLayer.Models
     public class Book
     {
 
-        public string Author;
+        public Author Author;
         public string Title;
         public bool HardCover;
         public string Description;
@@ -37,7 +37,7 @@ namespace BookStore.DataLayer.Models
         {
         }
 
-        public Book(string author, string title, float price)
+        public Book(Author author, string title, float price)
         {
             Author = author;
             Title = title;

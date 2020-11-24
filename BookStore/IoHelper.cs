@@ -109,7 +109,7 @@ namespace BookStore
 
         private string BuildBookString(Book book)
         {
-            return $"{book.Author} - {book.Title} ({book.PublishDate.Year}): {book.Price} (Av. copies: {book.CopiesCount})";
+            return $"{book.Author.Surname} - {book.Title} ({book.PublishDate.Year}): {book.Price} (Av. copies: {book.CopiesCount})";
         }
     }
 }

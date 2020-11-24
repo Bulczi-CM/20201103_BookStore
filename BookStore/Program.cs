@@ -54,9 +54,16 @@ namespace BookStore
         {
             Console.WriteLine("Creating a book.");
 
+            var author = new Author
+            {
+                Name = _ioHelper.GetTextFromUser("Enter author name"),
+                Surname = _ioHelper.GetTextFromUser("Enter author surname"),
+                BirthDate = _ioHelper.GetDateTimeFromUser("Enter author's bday date"),
+            };
+
             var newBook = new Book()
             {
-                Author =      _ioHelper.GetTextFromUser("Enter author"),
+                Author =      author,
                 Title =       _ioHelper.GetTextFromUser("Enter title"),
                 Description = _ioHelper.GetTextFromUser("Enter description"),
                 Genre =       _ioHelper.GetBookGenreFromUser("Enter genre"),
