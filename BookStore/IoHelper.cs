@@ -1,4 +1,5 @@
-﻿using BookStore.DataLayer.Models;
+﻿using BookStore.BusinessLayer;
+using BookStore.DataLayer.Models;
 using System;
 using System.Globalization;
 
@@ -125,6 +126,24 @@ namespace BookStore
         private string BuildAuthorString(Author author)
         {
             return $"{author.Surname} {author.Name} ({author.BirthDate})";
+        }
+
+        public CommunicationChannel GetCommunicationChannelFromUser(string message)
+        {
+            var correctValues = "";
+
+            foreach (var commChannel in (CommunicationChannel[])Enum.GetValues(typeof(CommunicationChannel)))
+            {
+                correctValues += $"{commChannel},";
+            }
+
+            object result;
+            while (!Enum.TryParse(typeof(CommunicationChannel), GetTextFromUser($"{message} ({correctValues}):"), out result))
+            {
+                Console.WriteLine("Not a correct value - use one from the brackets. Try again...");
+            }
+
+            return (CommunicationChannel)result;
         }
     }
 }

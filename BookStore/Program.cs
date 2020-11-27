@@ -7,9 +7,11 @@ namespace BookStore
 {
     class Program
     {
-        private IoHelper _ioHelper = new IoHelper();
-        private BooksService _booksService = new BooksService();
-        private AuthorsService _authorsService = new AuthorsService();
+        private Menu                 _menu = new Menu();
+        private IoHelper             _ioHelper = new IoHelper();
+        private BooksService         _booksService = new BooksService();
+        private AuthorsService       _authorsService = new AuthorsService();
+        private NotificationsService _notificationService = new NotificationsService();
 
         static void Main(string[] args)
         {
@@ -18,41 +20,28 @@ namespace BookStore
 
         void Run()
         {
+            int i = 0;
+            RegisterMenuOptions();
+
             do
             {
-                Console.WriteLine();
-                Console.WriteLine("Choose action: ");
-                Console.WriteLine("Press 1 to Add Author");
-                Console.WriteLine("Press 2 to Add book");
-                Console.WriteLine("Press 3 to Print books");
-                Console.WriteLine("Press 4 to Change stock for book");
-                Console.WriteLine("Press 5 to Sell books");
+                _menu.PrintAvailableOptions();
 
                 int userChoice = _ioHelper.GetIntFromUser("Select option");
 
-                switch (userChoice)
-                {
-                    case 1:
-                        AddAuthor();
-                        break;
-                    case 2:
-                        AddBook();
-                        break;
-                    case 3:
-                        PrintAllBooks();
-                        break;
-                    case 4:
-                        ChangeStockForBook();
-                        break;
-                    case 5:
-                        SellBooks();
-                        break;
-                    default:
-                        Console.WriteLine("Unknown option");
-                        break;
-                }
+                _menu.ExecuteOption(userChoice);
             }
             while (true);
+        }
+
+        private void RegisterMenuOptions()
+        {
+            _menu.AddOption(new MenuItem { Key = 1, Action = AddAuthor,               Description = "Add new author" });
+            _menu.AddOption(new MenuItem { Key = 2, Action = AddBook,                 Description = "Add new book" });
+            _menu.AddOption(new MenuItem { Key = 3, Action = PrintAllBooks,           Description = "Print all books" });
+            _menu.AddOption(new MenuItem { Key = 4, Action = ChangeStockForBook,      Description = "Change stock for book" });
+            _menu.AddOption(new MenuItem { Key = 5, Action = SellBooks,               Description = "Sell some books" });
+            _menu.AddOption(new MenuItem { Key = 6, Action = BookArrivalNotification, Description = "Post notification when new book arrives" });
         }
 
         void AddAuthor()
@@ -118,6 +107,11 @@ namespace BookStore
 
             _booksService.AddBook(newBook);
             Console.WriteLine("Book added successfully");
+
+            if (_notificationService.SubscribedNotification != null)
+            {
+                _notificationService.SubscribedNotification(this, new NewBookEventArgs { Book = newBook });
+            }
         }
 
         private void PrintAllBooks()
@@ -210,6 +204,14 @@ namespace BookStore
             float cost = _booksService.SellBooks(basket);
 
             Console.WriteLine($"Recipt: ${cost}");
+        }
+
+        private void BookArrivalNotification()
+        {
+            var authorSurname = _ioHelper.GetTextFromUser("Enter author surname");
+            var communicationChannel = _ioHelper.GetCommunicationChannelFromUser("Enter communication channel");
+
+            _notificationService.AddNotification(authorSurname, communicationChannel);
         }
     }
 }
