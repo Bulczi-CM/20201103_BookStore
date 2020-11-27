@@ -5,9 +5,9 @@ VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookStore", "BookStore\BookStore.csproj", "{4D14DDCB-C829-4A73-B1C9-95276B54BE0A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookStore.DataLayer", "BookStore.DataLayer\BookStore.DataLayer.csproj", "{D482968E-7055-4C38-848C-87671E96D56B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookStore.DataLayer", "BookStore.DataLayer\BookStore.DataLayer.csproj", "{D482968E-7055-4C38-848C-87671E96D56B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookStore.BusinessLayer", "BookStore.BusinessLayer\BookStore.BusinessLayer.csproj", "{4CC3D02E-DC6D-41E9-AD4A-DBD0DD2CC275}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookStore.BusinessLayer", "BookStore.BusinessLayer\BookStore.BusinessLayer.csproj", "{4CC3D02E-DC6D-41E9-AD4A-DBD0DD2CC275}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

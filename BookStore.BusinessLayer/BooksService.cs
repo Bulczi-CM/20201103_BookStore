@@ -9,16 +9,23 @@ namespace BookStore.BusinessLayer
     {
         public void AddBook(Book book)
         {
-            Stock.Books.Add(book);
+            using (var context = new BookStoresDbContext())
+            {
+                context.Books.Add(book);
+                context.SaveChanges();
+            }
         }
 
         public List<Book> GetAllBooks()
         {
-            return Stock.Books.ToList();
+            using (var context = new BookStoresDbContext())
+            {
+                return context.Books.ToList();
+            }
         }
 
         public bool UpdateBookQuantity(int bookId, uint quantity)
-        {
+        {   //TODO - to jeszcze nie dziala!
             Book book = GetBook(bookId);
 
             if(book == null)
@@ -32,33 +39,33 @@ namespace BookStore.BusinessLayer
 
         private Book GetBook(int bookId)
         {
-            if (Stock.Books.Count <= bookId)
+            using (var context = new BookStoresDbContext())
             {
-                return null;
+                return context.Books.FirstOrDefault(book => book.Id == bookId);
             }
-
-            Book book = Stock.Books[bookId];
-            return book;
         }
 
         public float SellBooks(Dictionary<int, uint> basket)
         {
-            float cost = 0.0f;
-
-            foreach(KeyValuePair<int, uint> item in basket)
+            if(basket.Count() == 0)
             {
-                Book book = GetBook(item.Key);
-
-                if (book == null || book.CopiesCount < item.Value)
-                {
-                    continue;
-                }
-
-                book.CopiesCount -= item.Value;
-                cost += book.Price * item.Value;
+                return 0.0f;
             }
 
-            return cost;
+            var cost = 0.0f;
+
+            var bookIds = basket
+                .Select(keyValuePair => keyValuePair.Key)
+                .ToList();
+
+            using(var context = new BookStoresDbContext())
+            {
+                //TODO Rozbic na pojedyncze zapytania i pokazac jak to dziala
+                return context.Books
+                    .Where(book => bookIds.Contains(book.Id))
+                    .Select(book => book.Price * basket[book.Id])
+                    .Sum();
+            }
         }
     }
 }

@@ -9,12 +9,19 @@ namespace BookStore.BusinessLayer
     {
         public void Add(Author author)
         {
-            Stock.Authors.Add(author);
+            using (var context = new BookStoresDbContext())
+            {
+                context.Authors.Add(author);
+                context.SaveChanges();
+            }
         }
 
         public List<Author> GetAll()
         {
-            return Stock.Authors.ToList();
+            using (var context = new BookStoresDbContext())
+            {
+                return context.Authors.ToList();
+            }
         }
     }
 }

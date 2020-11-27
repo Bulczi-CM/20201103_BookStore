@@ -13,17 +13,20 @@ namespace BookStore.DataLayer.Models
 
     public class Book
     {
+        public int Id { get; set; }
 
-        public Author Author;
-        public string Title;
-        public bool HardCover;
-        public string Description;
-        public uint PagesCount;
-        public BookGenre Genre; //zamienic na enum potem
-        public DateTime PublishDate;
-        public string Publisher;
-        public float Price;
-        public uint CopiesCount;
+        public int AuthorId { get; set; }
+        public Author Author { get; set; }
+
+        public string Title { get; set; }
+        public bool HardCover { get; set; }
+        public string Description { get; set; }
+        public uint PagesCount { get; set; }
+        public BookGenre Genre { get; set; }
+        public DateTime PublishDate { get; set; }
+        public string Publisher { get; set; }
+        public float Price { get; set; }
+        public uint CopiesCount { get; set; }
 
         public bool IsAvailable
         {

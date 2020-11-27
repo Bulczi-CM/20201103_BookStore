@@ -7,20 +7,21 @@ namespace BookStore
 {
     class Program
     {
-        private Menu                 _menu = new Menu();
-        private IoHelper             _ioHelper = new IoHelper();
-        private BooksService         _booksService = new BooksService();
-        private AuthorsService       _authorsService = new AuthorsService();
-        private NotificationsService _notificationService = new NotificationsService();
+        private Menu                      _menu                      = new Menu();
+        private IoHelper                  _ioHelper                  = new IoHelper();
+        private BooksService              _booksService              = new BooksService();
+        private AuthorsService            _authorsService            = new AuthorsService();
+        private NotificationsService      _notificationService       = new NotificationsService();
+        private DatabaseManagementService _databaseManagementService = new DatabaseManagementService();
 
-        static void Main(string[] args)
+        static void Main()
         {
             new Program().Run();
         }
 
         void Run()
         {
-            int i = 0;
+            _databaseManagementService.EnsureDatabaseCreation();
             RegisterMenuOptions();
 
             do
