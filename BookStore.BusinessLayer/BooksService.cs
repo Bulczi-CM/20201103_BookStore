@@ -46,12 +46,15 @@ namespace BookStore.BusinessLayer
             return true;
         }
 
-        private Book GetBook(int bookId)
+        public List<Bookstore> GetBookAvailability(int bookId)
         {
             using (var context = new BookStoresDbContext())
             {
-                return context.Books
-                    .FirstOrDefault(book => book.Id == bookId);
+                return context.BookStoresBooks
+                    .Include(bookStoreBook => bookStoreBook.BookStore)
+                    .Where(bookStoreBook => bookStoreBook.BookId == bookId)
+                    .Select(bookStoreBook => bookStoreBook.BookStore)
+                    .ToList();
             }
         }
 
@@ -71,6 +74,11 @@ namespace BookStore.BusinessLayer
                     var book = context.Books
                         .Where(book => book.Id == item.Key)
                         .FirstOrDefault();
+
+                    if (book == null)
+                    {
+                        continue;
+                    }
 
                     cost += book.Price * item.Value;
                     book.CopiesCount -= item.Value;

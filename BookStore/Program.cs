@@ -14,6 +14,7 @@ namespace BookStore
         private AuthorsService            _authorsService            = new AuthorsService();
         private NotificationsService      _notificationService       = new NotificationsService();
         private DatabaseManagementService _databaseManagementService = new DatabaseManagementService();
+        private BookStoreService          _bookStoreService          = new BookStoreService();
 
         static void Main()
         {
@@ -38,12 +39,76 @@ namespace BookStore
 
         private void RegisterMenuOptions()
         {
-            _menu.AddOption(new MenuItem { Key = 1, Action = AddAuthor,               Description = "Add new author" });
-            _menu.AddOption(new MenuItem { Key = 2, Action = AddBook,                 Description = "Add new book" });
-            _menu.AddOption(new MenuItem { Key = 3, Action = PrintAllBooks,           Description = "Print all books" });
-            _menu.AddOption(new MenuItem { Key = 4, Action = ChangeStockForBook,      Description = "Change stock for book" });
-            _menu.AddOption(new MenuItem { Key = 5, Action = SellBooks,               Description = "Sell some books" });
-            _menu.AddOption(new MenuItem { Key = 6, Action = BookArrivalNotification, Description = "Post notification when new book arrives" });
+            _menu.AddOption(new MenuItem { Key =  1, Action = AddAuthor,                Description = "Add new author" });
+            _menu.AddOption(new MenuItem { Key =  2, Action = AddBook,                  Description = "Add new book" });
+            _menu.AddOption(new MenuItem { Key =  3, Action = AddBookStore,             Description = "Add new bookstore" });
+            _menu.AddOption(new MenuItem { Key =  4, Action = PrintAllBooks,            Description = "Print all books" });
+            _menu.AddOption(new MenuItem { Key =  5, Action = ChangeStockForBook,       Description = "Change stock for book" });
+            _menu.AddOption(new MenuItem { Key =  6, Action = SellBooks,                Description = "Sell some books" });
+            _menu.AddOption(new MenuItem { Key =  7, Action = FindBooksByAuthorSurname, Description = "Find books by author surname" });
+            _menu.AddOption(new MenuItem { Key =  8, Action = AddBookToBookStore,       Description = "Add book to bookstore" });
+            _menu.AddOption(new MenuItem { Key =  9, Action = FindBookInBookStores,     Description = "Find book in bookstores" });
+            _menu.AddOption(new MenuItem { Key = 10, Action = UpdateAuthor,             Description = "Update author" });
+            _menu.AddOption(new MenuItem { Key = 11, Action = DeleteAuthor,             Description = "Delete author" });
+
+            _menu.AddOption(new MenuItem { Key = 20, Action = BookArrivalNotification,  Description = "Post notification when new book arrives" });
+        }
+
+        private void DeleteAuthor()
+        {
+            var id = _ioHelper.GetIntFromUser("Provide author id");
+
+            //var author = _authorsService.Get(id);
+            //_authorsService.Delete(author);
+
+            _authorsService.Delete(new Author { Id = id });
+        }
+
+        private void UpdateAuthor()
+        {
+            var id = _ioHelper.GetIntFromUser("Provide author id");
+
+            var author = _authorsService.Get(id);
+
+            author.Name    = _ioHelper.GetTextFromUser($"Privde new name [current: {author.Name}]:");
+            author.Surname = _ioHelper.GetTextFromUser($"Privde new surname [current: {author.Surname}]:");
+
+            _authorsService.Update(author);
+        }
+
+        private void FindBookInBookStores()
+        {
+            var bookId = _ioHelper.GetIntFromUser("Provide Book id");
+
+            var bookStores = _booksService.GetBookAvailability(bookId);
+
+            foreach(var bookStore in bookStores)
+            {
+                _ioHelper.PrintBookStore(bookStore);
+            }
+        }
+
+        private void AddBookToBookStore()
+        {
+            var bookStoreBook = new BookStoreBook
+            {
+                BookId = _ioHelper.GetIntFromUser("Provide Book id"),
+                BookStoreId = _ioHelper.GetIntFromUser("Provide BookStore id")
+            };
+
+            _bookStoreService.AddBookToBookStore(bookStoreBook);
+        }
+
+        private void AddBookStore()
+        {
+            var bookstore = new Bookstore
+            {
+                Name = _ioHelper.GetTextFromUser("Enter bookstore name"),
+                Address = _ioHelper.GetTextFromUser("Enter bookstore address")
+            };
+
+            _bookStoreService.Add(bookstore);
+            Console.WriteLine("BookStore added successfully");
         }
 
         void AddAuthor()
@@ -179,6 +244,17 @@ namespace BookStore
 
             int index = _ioHelper.GetIntFromUser("Select book id");
             return index;
+        }
+
+        private void FindBooksByAuthorSurname()
+        {
+            var surname = _ioHelper.GetTextFromUser("Enter author surname");
+            var books = _authorsService.GetBooksByAuthoSurname(surname);
+
+            foreach (var book in books)
+            {
+                _ioHelper.PrintBook(book);
+            }
         }
 
         private void SellBooks()

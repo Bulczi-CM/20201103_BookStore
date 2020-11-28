@@ -108,6 +108,11 @@ namespace BookStore
             Console.WriteLine(BuildBookString(book));
         }
 
+        internal void PrintBookStore(Bookstore bookStore)
+        {
+            Console.WriteLine($"{bookStore.Name}, Address: {bookStore.Address}");
+        }
+
         private string BuildBookString(Book book)
         {
             return $"{book.Author.Surname} - {book.Title} ({book.PublishDate.Year}): {book.Price} (Av. copies: {book.CopiesCount})";
