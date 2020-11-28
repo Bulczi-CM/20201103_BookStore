@@ -76,6 +76,12 @@ namespace BookStore.BusinessLayer
                         .Where(book => book.Id == item.Key)
                         .Select(book => book.Price)
                         .FirstOrDefault() * item.Value;
+                    var book = context.Books
+                        .Where(book => book.Id == item.Key)
+                        .First();
+                    book.CopiesCount -= item.Value;
+                    context.SaveChanges();
+                    
                 }
             }
 
