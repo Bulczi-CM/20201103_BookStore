@@ -64,10 +64,6 @@ namespace BookStore.BusinessLayer
 
             var cost = 0.0f;
 
-            var bookIds = basket
-                .Select(keyValuePair => keyValuePair.Key)
-                .ToList();
-
             using(var context = new BookStoresDbContext())
             {
                 foreach(var item in basket)
