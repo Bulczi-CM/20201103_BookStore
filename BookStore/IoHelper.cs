@@ -115,7 +115,7 @@ namespace BookStore
 
         public void PrintAuthor(Author author, int index)
         {
-            Console.WriteLine($"{index}. {BuildAuthorString(author)}");
+            Console.WriteLine($"{author.Id}. {BuildAuthorString(author)}");
         }
 
         public void PrintAuthor(Author author)

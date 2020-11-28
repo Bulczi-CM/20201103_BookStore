@@ -2,6 +2,7 @@
 using BookStore.DataLayer.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace BookStore
 {
@@ -84,9 +85,9 @@ namespace BookStore
 
             PrintAuthors(authors, true);
 
-            int index = _ioHelper.GetIntFromUser("Select author id") - 1;
+            int authorId = _ioHelper.GetIntFromUser("Select author id");
 
-            if (index >= authors.Count || index < 0)
+            if (!authors.Any(author => author.Id == authorId))
             {
                 Console.WriteLine("Incorrect author Id!");
                 return;
@@ -94,7 +95,7 @@ namespace BookStore
 
             var newBook = new Book()
             {
-                Author =      authors[index],
+                AuthorId =    authorId,
                 Title =       _ioHelper.GetTextFromUser("Enter title"),
                 Description = _ioHelper.GetTextFromUser("Enter description"),
                 Genre =       _ioHelper.GetBookGenreFromUser("Enter genre"),
@@ -128,7 +129,7 @@ namespace BookStore
 
                 if (printIndex)
                 {
-                    _ioHelper.PrintBook(book, i + 1);
+                    _ioHelper.PrintBook(book, book.Id);
                 }
                 else
                 {
@@ -145,7 +146,7 @@ namespace BookStore
 
                 if (printIndex)
                 {
-                    _ioHelper.PrintAuthor(author, i + 1);
+                    _ioHelper.PrintAuthor(author, i);
                 }
                 else
                 {
@@ -177,7 +178,7 @@ namespace BookStore
             PrintBooks(books, true);
 
             int index = _ioHelper.GetIntFromUser("Select book id");
-            return index - 1;
+            return index;
         }
 
         private void SellBooks()

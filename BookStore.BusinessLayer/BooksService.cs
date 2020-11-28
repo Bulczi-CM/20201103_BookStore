@@ -1,5 +1,6 @@
 ﻿using BookStore.DataLayer;
 using BookStore.DataLayer.Models;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -20,20 +21,28 @@ namespace BookStore.BusinessLayer
         {
             using (var context = new BookStoresDbContext())
             {
-                return context.Books.ToList();
+                return context.Books
+                    .Include(book => book.Author) //<== to sprawi, ze w ksiazce beda tez dane autora
+                    .ToList();
             }
         }
 
         public bool UpdateBookQuantity(int bookId, uint quantity)
-        {   //TODO - to jeszcze nie dziala!
-            Book book = GetBook(bookId);
-
-            if(book == null)
+        {   //TODO - Co sie stanie, jezeli tutaj bedzie Book book a nie int bookId
+            using(var context = new BookStoresDbContext())
             {
-                return false;
+                var book = context.Books
+                    .FirstOrDefault(book => book.Id == bookId);
+
+                if(book == null)
+                {
+                    return false;
+                }
+
+                book.CopiesCount = quantity;
+                context.SaveChanges();
             }
 
-            book.CopiesCount = quantity;
             return true;
         }
 
@@ -41,7 +50,8 @@ namespace BookStore.BusinessLayer
         {
             using (var context = new BookStoresDbContext())
             {
-                return context.Books.FirstOrDefault(book => book.Id == bookId);
+                return context.Books
+                    .FirstOrDefault(book => book.Id == bookId);
             }
         }
 
@@ -60,12 +70,16 @@ namespace BookStore.BusinessLayer
 
             using(var context = new BookStoresDbContext())
             {
-                //TODO Rozbic na pojedyncze zapytania i pokazac jak to dziala
-                return context.Books
-                    .Where(book => bookIds.Contains(book.Id))
-                    .Select(book => book.Price * basket[book.Id])
-                    .Sum();
+                foreach(var item in basket)
+                {
+                    cost += context.Books
+                        .Where(book => book.Id == item.Key)
+                        .Select(book => book.Price)
+                        .FirstOrDefault() * item.Value;
+                }
             }
+
+            return cost;
         }
     }
 }
