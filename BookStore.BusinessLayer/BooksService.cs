@@ -72,16 +72,14 @@ namespace BookStore.BusinessLayer
             {
                 foreach(var item in basket)
                 {
-                    cost += context.Books
-                        .Where(book => book.Id == item.Key)
-                        .Select(book => book.Price)
-                        .FirstOrDefault() * item.Value;
                     var book = context.Books
                         .Where(book => book.Id == item.Key)
-                        .First();
+                        .FirstOrDefault();
+
+                    cost += book.Price * item.Value;
                     book.CopiesCount -= item.Value;
+
                     context.SaveChanges();
-                    
                 }
             }
 
