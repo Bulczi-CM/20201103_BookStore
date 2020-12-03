@@ -1,5 +1,8 @@
-﻿using BookStore.DataLayer;
+﻿using BookStore.BusinessLayer.Models;
+using BookStore.DataLayer;
 using BookStore.DataLayer.Models;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace BookStore.BusinessLayer
 {
@@ -20,6 +23,27 @@ namespace BookStore.BusinessLayer
             {
                 context.BookStoresBooks.Add(bookStoreBook);
                 context.SaveChanges();
+            }
+        }
+
+        public List<BookStoreUserAssignment> GetBookStoresAssignedToUsers()
+        {
+            using (var context = new BookStoresDbContext())
+            {
+                var result = context.BookStores
+                    .Join(
+                        context.Users,
+                        bookStore => bookStore.Address,
+                        user => user.City,
+                        (bookStore, user) => new BookStoreUserAssignment
+                        {
+                            BookStoreName = bookStore.Name,
+                            City = user.City,
+                            Login = user.Login
+                        })
+                        .ToList();
+
+                return result;
             }
         }
     }

@@ -12,9 +12,12 @@ namespace BookStore
         private IoHelper                  _ioHelper                  = new IoHelper();
         private BooksService              _booksService              = new BooksService();
         private AuthorsService            _authorsService            = new AuthorsService();
+        private UsersService              _usersService              = new UsersService();
         private NotificationsService      _notificationService       = new NotificationsService();
         private DatabaseManagementService _databaseManagementService = new DatabaseManagementService();
         private BookStoreService          _bookStoreService          = new BookStoreService();
+
+        private bool _exit = false;
 
         static void Main()
         {
@@ -34,7 +37,7 @@ namespace BookStore
 
                 _menu.ExecuteOption(userChoice);
             }
-            while (true);
+            while (!_exit);
         }
 
         private void RegisterMenuOptions()
@@ -50,8 +53,36 @@ namespace BookStore
             _menu.AddOption(new MenuItem { Key =  9, Action = FindBookInBookStores,     Description = "Find book in bookstores" });
             _menu.AddOption(new MenuItem { Key = 10, Action = UpdateAuthor,             Description = "Update author" });
             _menu.AddOption(new MenuItem { Key = 11, Action = DeleteAuthor,             Description = "Delete author" });
+            _menu.AddOption(new MenuItem { Key = 12, Action = AddUser,                  Description = "Add new user" });
+            _menu.AddOption(new MenuItem { Key = 13, Action = GetRecommendedBookStores, Description = "Get bookstores recommended for users" });
 
             _menu.AddOption(new MenuItem { Key = 20, Action = BookArrivalNotification,  Description = "Post notification when new book arrives" });
+
+            _menu.AddOption(new MenuItem { Key = 99, Action = () => { _exit = true; },  Description = "Close the application" });
+        }
+
+        private void GetRecommendedBookStores()
+        {
+            var recommendations = _bookStoreService.GetBookStoresAssignedToUsers();
+
+            foreach(var recommendation in recommendations)
+            {
+                Console.WriteLine($"{recommendation.Login} {recommendation.City} {recommendation.BookStoreName}");
+            }
+        }
+
+        private void AddUser()
+        {
+            var newUser = new User
+            {
+                Login = _ioHelper.GetTextFromUser("Login"),
+                Password = _ioHelper.GetTextFromUser("Password"),
+                PhoneNumber = _ioHelper.GetTextFromUser("Phone number with country prefix"),
+                City = _ioHelper.GetTextFromUser("City")
+            };
+
+            _usersService.Add(newUser);
+            Console.WriteLine("User added successfully");
         }
 
         private void DeleteAuthor()
