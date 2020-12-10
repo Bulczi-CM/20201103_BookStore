@@ -1,4 +1,5 @@
-﻿using BookStore.DataLayer;
+﻿using System;
+using BookStore.DataLayer;
 using BookStore.DataLayer.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -9,10 +10,12 @@ namespace BookStore.BusinessLayer
     public class BooksService
     {
         private IBookRepository _bookRepository;
+        private INotifier _notifier;
 
-        public BooksService(IBookRepository bookRepository)
+        public BooksService(IBookRepository bookRepository, INotifier notifier)
         {
             _bookRepository = bookRepository;
+            _notifier = notifier;
         }
 
         public void AddBook(Book book)
@@ -86,8 +89,12 @@ namespace BookStore.BusinessLayer
                 cost += book.Price * item.Value;
                 book.CopiesCount -= item.Value;
 
+
                 _bookRepository.Update(book);
             }
+
+            if(cost > 0)
+                _notifier.Notify("udało się sprzedać książkę!!!! zarobiliśmy całe " + cost + " złotych!");
 
             return cost;
         }

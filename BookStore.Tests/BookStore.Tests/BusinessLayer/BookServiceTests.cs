@@ -9,6 +9,7 @@ using NUnit.Framework;
 
 namespace BookStore.Tests.BusinessLayer
 {
+    /// Nasz rêcznie robiony mock
     internal class BookRepositoryMock : IBookRepository
     {
         public Book GetBookById(int id)
@@ -29,7 +30,8 @@ namespace BookStore.Tests.BusinessLayer
         }
     }
     
-    internal class BookRepositoryMockSameAsGeneratedByMoq : IBookRepository // new Mock<IBookRepository>()
+    /// pusta implementacja — równowa¿na z new Mock<IBookRepository>()
+    internal class BookRepositoryMockSameAsGeneratedByMoq : IBookRepository 
     {
         public Book GetBookById(int id)
         {
@@ -48,11 +50,13 @@ namespace BookStore.Tests.BusinessLayer
         [TestCase(2, 20)]
         [TestCase(3, 30)]
         [TestCase(500, 5000)]
-        public void SellBooks_MultipleCopiesOfOneBookCosting_ReturnsCorrectCost(int quantity, double expectedCost)
+        public void SellBooks_MultipleCopiesOfOneBook_ReturnsCorrectCost(int quantity, double expectedCost)
         {
             Dictionary<int, uint> basket = new Dictionary<int, uint>();
             basket.Add(1, (uint)quantity);
-            var service = new BooksService(new BookRepositoryMock());
+
+            var mock = new Mock<INotifier>();
+            var service = new BooksService(new BookRepositoryMock(), mock.Object);
 
             double cost = service.SellBooks(basket);
 
@@ -66,7 +70,8 @@ namespace BookStore.Tests.BusinessLayer
             basket.Add(1, 1);
             basket.Add(2, 1);
             basket.Add(3, 1);
-            var service = new BooksService(new BookRepositoryMock());
+            var mock = new Mock<INotifier>();
+            var service = new BooksService(new BookRepositoryMock(), mock.Object);
 
             double cost = service.SellBooks(basket);
 
@@ -87,10 +92,9 @@ namespace BookStore.Tests.BusinessLayer
             bookRepositoryMock
                 .Setup(repo => repo.GetBookById(1))
                 .Returns(new Book(null, "pierwsza", 10));
-
             IBookRepository bookRepository = bookRepositoryMock.Object;
-
-            var service = new BooksService(bookRepository);
+            var notifierMock = new Mock<INotifier>();
+            var service = new BooksService(bookRepository, notifierMock.Object);
 
             double cost = service.SellBooks(basket);
 
@@ -104,11 +108,65 @@ namespace BookStore.Tests.BusinessLayer
             basket.Add(1, 1);
             basket.Add(2, 1);
             basket.Add(3, 1);
-            var service = new BooksService(new BookRepositoryMock());
+            var bookRepositoryMock = new Mock<IBookRepository>();
+            bookRepositoryMock
+                .Setup(repo => repo.GetBookById(1))
+                .Returns(new Book(null, "pierwsza", 10));
+            bookRepositoryMock
+                .Setup(repo => repo.GetBookById(2))
+                .Returns(new Book(null, "druga", 15));
+            bookRepositoryMock
+                .Setup(repo => repo.GetBookById(3))
+                .Returns(new Book(null, "trzecia", 20));
+            var notifierMock = new Mock<INotifier>();
+            var service = new BooksService(bookRepositoryMock.Object, notifierMock.Object);
 
             double cost = service.SellBooks(basket);
 
             cost.Should().Be(45);
+        }
+
+        [Test]
+        public void SellBooks_TwoBooksWereSold_SendsNotificationOnce()
+        {
+            Dictionary<int, uint> basket = new Dictionary<int, uint>();
+            basket.Add(1, 1);
+            basket.Add(2, 1);
+            
+            var bookRepositoryMock = new Mock<IBookRepository>();
+            bookRepositoryMock
+                .Setup(repo => repo.GetBookById(1))
+                .Returns(new Book(null, "pierwsza", 10));
+            bookRepositoryMock
+                .Setup(repo => repo.GetBookById(2))
+                .Returns(new Book(null, "pierwsza", 10));
+
+            var notifierMock = new Mock<INotifier>();
+            var service = new BooksService(bookRepositoryMock.Object, notifierMock.Object);
+
+            service.SellBooks(basket);
+
+            // assert - chce sie upewnic, ze Notify() zostaje wywolane raz
+            notifierMock.Verify(notifier => notifier.Notify(It.IsAny<string>()), Times.Once);
+        }
+
+        [Test]
+        public void SellBooks_NoneBooksWereSold_DoesNotSendNotification()
+        {
+            Dictionary<int, uint> basket = new Dictionary<int, uint>();
+            
+            var bookRepositoryMock = new Mock<IBookRepository>();
+            bookRepositoryMock
+                .Setup(repo => repo.GetBookById(1))
+                .Returns(new Book(null, "pierwsza", 10));
+
+            var notifierMock = new Mock<INotifier>();
+            var service = new BooksService(bookRepositoryMock.Object, notifierMock.Object);
+
+            service.SellBooks(basket);
+
+            // assert - chce sie upewnic, ze Notify() NIE zostaje wywolane
+            notifierMock.Verify(notifier => notifier.Notify(It.IsAny<string>()), Times.Never);
         }
 
         [Test]
