@@ -10,7 +10,7 @@ namespace BookStore
     {
         private Menu                      _menu                      = new Menu();
         private IoHelper                  _ioHelper                  = new IoHelper();
-        private BooksService              _booksService              = new BooksService();
+        private BooksService              _booksService              = new BooksService(new BookRepository());
         private AuthorsService            _authorsService            = new AuthorsService();
         private UsersService              _usersService              = new UsersService();
         private NotificationsService      _notificationService       = new NotificationsService();
