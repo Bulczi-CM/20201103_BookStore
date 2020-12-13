@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using BookStore.BusinessLayer;
+using BookStore.DataLayer;
 using BookStore.DataLayer.Models;
 using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
 using Moq;
 using NUnit.Framework;
 
@@ -27,6 +29,20 @@ namespace BookStore.Tests.BusinessLayer
         public void Update(Book book)
         {
             
+        }
+    }
+
+    internal class BookStoreDbContextMock : DbContext, IBookStoresDbContext
+    {
+        public DbSet<User> Users { get; set; }
+        public DbSet<Author> Authors { get; set; }
+        public DbSet<Book> Books { get; set; }
+        public DbSet<Bookstore> BookStores { get; set; }
+        public DbSet<BookStoreBook> BookStoresBooks { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseInMemoryDatabase("BookStoreDb");
         }
     }
     
@@ -56,7 +72,7 @@ namespace BookStore.Tests.BusinessLayer
             basket.Add(1, (uint)quantity);
 
             var mock = new Mock<INotifier>();
-            var service = new BooksService(new BookRepositoryMock(), mock.Object);
+            var service = new BooksService(new BookRepositoryMock(), mock.Object, () => new BookStoreDbContextMock());
 
             double cost = service.SellBooks(basket);
 
@@ -70,8 +86,9 @@ namespace BookStore.Tests.BusinessLayer
             basket.Add(1, 1);
             basket.Add(2, 1);
             basket.Add(3, 1);
+
             var mock = new Mock<INotifier>();
-            var service = new BooksService(new BookRepositoryMock(), mock.Object);
+            var service = new BooksService(new BookRepositoryMock(), mock.Object, () => new BookStoreDbContextMock());
 
             double cost = service.SellBooks(basket);
 
@@ -93,8 +110,9 @@ namespace BookStore.Tests.BusinessLayer
                 .Setup(repo => repo.GetBookById(1))
                 .Returns(new Book(null, "pierwsza", 10));
             IBookRepository bookRepository = bookRepositoryMock.Object;
+
             var notifierMock = new Mock<INotifier>();
-            var service = new BooksService(bookRepository, notifierMock.Object);
+            var service = new BooksService(bookRepository, notifierMock.Object, () => new BookStoreDbContextMock());
 
             double cost = service.SellBooks(basket);
 
@@ -108,6 +126,7 @@ namespace BookStore.Tests.BusinessLayer
             basket.Add(1, 1);
             basket.Add(2, 1);
             basket.Add(3, 1);
+
             var bookRepositoryMock = new Mock<IBookRepository>();
             bookRepositoryMock
                 .Setup(repo => repo.GetBookById(1))
@@ -118,8 +137,9 @@ namespace BookStore.Tests.BusinessLayer
             bookRepositoryMock
                 .Setup(repo => repo.GetBookById(3))
                 .Returns(new Book(null, "trzecia", 20));
+
             var notifierMock = new Mock<INotifier>();
-            var service = new BooksService(bookRepositoryMock.Object, notifierMock.Object);
+            var service = new BooksService(bookRepositoryMock.Object, notifierMock.Object, () => new BookStoreDbContextMock());
 
             double cost = service.SellBooks(basket);
 
@@ -142,7 +162,7 @@ namespace BookStore.Tests.BusinessLayer
                 .Returns(new Book(null, "pierwsza", 10));
 
             var notifierMock = new Mock<INotifier>();
-            var service = new BooksService(bookRepositoryMock.Object, notifierMock.Object);
+            var service = new BooksService(bookRepositoryMock.Object, notifierMock.Object, () => new BookStoreDbContextMock());
 
             service.SellBooks(basket);
 
@@ -161,7 +181,7 @@ namespace BookStore.Tests.BusinessLayer
                 .Returns(new Book(null, "pierwsza", 10));
 
             var notifierMock = new Mock<INotifier>();
-            var service = new BooksService(bookRepositoryMock.Object, notifierMock.Object);
+            var service = new BooksService(bookRepositoryMock.Object, notifierMock.Object, () => new BookStoreDbContextMock());
 
             service.SellBooks(basket);
 

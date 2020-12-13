@@ -1,4 +1,5 @@
 ﻿using BookStore.BusinessLayer;
+using BookStore.DataLayer;
 using BookStore.DataLayer.Models;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace BookStore
     {
         private Menu                      _menu                      = new Menu();
         private IoHelper                  _ioHelper                  = new IoHelper();
-        private BooksService              _booksService              = new BooksService(new BookRepository(), new Notifier());
+        private BooksService              _booksService              = new BooksService(new BookRepository(), new Notifier(), () => new BookStoresDbContext());
         private AuthorsService            _authorsService            = new AuthorsService();
         private UsersService              _usersService              = new UsersService();
         private NotificationsService      _notificationService       = new NotificationsService();
@@ -58,7 +59,38 @@ namespace BookStore
 
             _menu.AddOption(new MenuItem { Key = 20, Action = BookArrivalNotification,  Description = "Post notification when new book arrives" });
 
+            _menu.AddOption(new MenuItem { Key = 30, Action = ExportOfferToFile,        Description = "Export offer to file" });
+            _menu.AddOption(new MenuItem { Key = 31, Action = ImportOfferFromFile,      Description = "Import offer from file" });
+
             _menu.AddOption(new MenuItem { Key = 99, Action = () => { _exit = true; },  Description = "Close the application" });
+        }
+
+        private void ImportOfferFromFile()
+        {
+            var filePath = _ioHelper.GetTextFromUser("Enter file path");
+            var format = _ioHelper.GetSerializationFormatFromUser("Choose file format");
+
+            var offer = _bookStoreService.DeserializeOffer(filePath, format);
+
+            foreach(var item in offer)
+            {
+                //...
+            }
+        }
+
+        private void ExportOfferToFile()
+        {
+            var targetPath = _ioHelper.GetTextFromUser("Enter target path");
+            var format = _ioHelper.GetSerializationFormatFromUser("Choose file format");
+
+            if (_bookStoreService.SerializeOffer(targetPath, format))
+            {
+                Console.WriteLine("Offer exported successfully");
+            }
+            else
+            {
+                Console.WriteLine("Error during offer export");
+            }
         }
 
         private void GetRecommendedBookStores()

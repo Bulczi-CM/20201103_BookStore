@@ -11,16 +11,21 @@ namespace BookStore.BusinessLayer
     {
         private IBookRepository _bookRepository;
         private INotifier _notifier;
+        private Func<IBookStoresDbContext> _dbContextFactoryMethod;
 
-        public BooksService(IBookRepository bookRepository, INotifier notifier)
+        public BooksService(
+            IBookRepository bookRepository,
+            INotifier notifier,
+            Func<IBookStoresDbContext> dbContextFactoryMethod)
         {
             _bookRepository = bookRepository;
             _notifier = notifier;
+            _dbContextFactoryMethod = dbContextFactoryMethod;
         }
 
         public void AddBook(Book book)
         {
-            using (var context = new BookStoresDbContext())
+            using (var context = _dbContextFactoryMethod())
             {
                 context.Books.Add(book);
                 context.SaveChanges();

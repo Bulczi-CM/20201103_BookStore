@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Xml.Serialization;
 
 namespace BookStore.DataLayer.Models
 {
@@ -18,12 +19,15 @@ namespace BookStore.DataLayer.Models
         public int AuthorId { get; set; }
         public Author Author { get; set; }
 
+        [XmlAttribute]
         public string Title { get; set; }
         public bool HardCover { get; set; }
         public string Description { get; set; }
         public uint PagesCount { get; set; }
         public BookGenre Genre { get; set; }
         public DateTime PublishDate { get; set; }
+
+        [XmlAttribute("PublisherName")]
         public string Publisher { get; set; }
         public float Price { get; set; }
         public uint CopiesCount { get; set; }

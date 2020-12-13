@@ -1,4 +1,5 @@
 ﻿using BookStore.BusinessLayer;
+using BookStore.BusinessLayer.Serializers;
 using BookStore.DataLayer.Models;
 using System;
 using System.Globalization;
@@ -96,6 +97,24 @@ namespace BookStore
             }
 
             return (BookGenre)result;
+        }
+
+        public SerializationFormat GetSerializationFormatFromUser(string message)
+        {
+            var correctValues = "";
+
+            foreach (var format in (SerializationFormat[])Enum.GetValues(typeof(SerializationFormat)))
+            {
+                correctValues += $"{format},";
+            }
+
+            object result;
+            while (!Enum.TryParse(typeof(SerializationFormat), GetTextFromUser($"{message} ({correctValues}):"), out result))
+            {
+                Console.WriteLine("Not a correct value - use one from the brackets. Try again...");
+            }
+
+            return (SerializationFormat)result;
         }
 
         public void PrintBook(Book book, int index)
