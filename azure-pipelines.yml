@@ -27,7 +27,11 @@ steps:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
-
+- task: VSTest@2
+  inputs:
+    testSelector: 'testAssemblies'
+    testAssemblyVer2: 'BookStore.Tests\BookStore.Tests\bin\Release\**\BookStore.Tests.dll'
+    searchFolder: '$(System.DefaultWorkingDirectory)'
 
 - task: NuGetCommand@2
   inputs:
