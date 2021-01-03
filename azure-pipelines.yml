@@ -30,7 +30,7 @@ steps:
 - task: VSTest@2
   inputs:
     testSelector: 'testAssemblies'
-    testAssemblyVer2: 'BookStore.Tests\BookStore.Tests\bin\Release\**\BookStore.Tests.dll'
+    testAssemblyVer2: '*.Tests/*.Tests/bin/$(BuildConfiguration)/**/*.Tests.dll'
     searchFolder: '$(System.DefaultWorkingDirectory)'
 
 - task: NuGetCommand@2
@@ -45,10 +45,10 @@ steps:
 - task: CopyFiles@2
   inputs:
     sourceFolder: '$(Build.SourcesDirectory)'
-    contents: '**/$(BuildConfiguration)/**/?(*.exe|*.dll|*.pdb)'
+    contents: 'BookStore/**/$(BuildConfiguration)/**/*.*'
     targetFolder: '$(Build.ArtifactStagingDirectory)'
 
 - task: PublishBuildArtifacts@1
   inputs:
     pathToPublish: '$(Build.ArtifactStagingDirectory)'
-    artifactName: drop
+    artifactName: 'BookStore_Drop'
