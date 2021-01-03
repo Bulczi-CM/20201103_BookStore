@@ -32,7 +32,8 @@ steps:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
-- task: VSTest@2
+- task: NuGetCommand@2
   inputs:
-    testSelector: 'testRun'
-    searchFolder: '$(System.DefaultWorkingDirectory)'
+    command: 'pack'
+    packagesToPack: '**/BookStore/BookStore.csproj'
+    versioningScheme: 'byBuildNumber'
