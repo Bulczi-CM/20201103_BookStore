@@ -40,3 +40,9 @@ steps:
     majorVersion: '1'
     minorVersion: '0'
     patchVersion: '0'
+
+- task: DownloadBuildArtifacts@0
+  inputs:
+    buildType: 'current'
+    downloadType: 'specific'
+    downloadPath: '$(System.ArtifactsDirectory)'
