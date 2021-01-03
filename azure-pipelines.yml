@@ -45,7 +45,7 @@ steps:
 - task: CopyFiles@2
   inputs:
     sourceFolder: '$(Build.SourcesDirectory)'
-    contents: 'BookStore/BookStore/bin/$(BuildConfiguration)/**/*.*'
+    contents: 'BookStore/bin/$(BuildConfiguration)/**'
     targetFolder: '$(Build.ArtifactStagingDirectory)'
 
 - task: PublishBuildArtifacts@1
