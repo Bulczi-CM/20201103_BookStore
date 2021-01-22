@@ -1,7 +1,10 @@
 ﻿using BookStore.BusinessLayer;
 using BookStore.DataLayer.Models;
+using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 
 namespace BookStore
@@ -21,11 +24,35 @@ namespace BookStore
 
         static void Main()
         {
-            new Program().Run();
+             new Program().Run();
         }
 
         void Run()
         {
+            var logConfiguration = new LoggerConfiguration();
+            
+            //string relativePath = Path.Combine(Environment.CurrentDirectory, "mojelogi.txt");
+            string absolutePath = "C:/logi/log.txt";
+
+            logConfiguration.WriteTo.File(absolutePath, Serilog.Events.LogEventLevel.Information);
+            
+            Serilog.Core.Logger logger = logConfiguration.CreateLogger();
+
+            Serilog.Debugging.SelfLog.Enable(msg => Console.WriteLine(msg));
+
+
+            /*try
+            {
+                throw new Exception("wyjątek");
+            }
+            catch (Exception e)
+            {
+                logger.Error(e, "niebezpieczna operacja zwróciła wyjątek");
+                //throw;
+            }*/
+
+            logger.Information("Aplikacja uruchomiona!");
+
             _databaseManagementService.EnsureDatabaseCreation();
             RegisterMenuOptions();
 
