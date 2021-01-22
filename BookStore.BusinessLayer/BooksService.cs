@@ -4,6 +4,7 @@ using BookStore.DataLayer.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using Serilog;
 
 namespace BookStore.BusinessLayer
 {
@@ -29,6 +30,8 @@ namespace BookStore.BusinessLayer
             {
                 context.Books.Add(book);
                 context.SaveChanges();
+                
+                Log.Information("Kupiono książkę!");
             }
         }
 

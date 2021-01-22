@@ -100,7 +100,7 @@ namespace BookStore.Tests.BusinessLayer
         [TestCase(2, 20)]
         [TestCase(3, 30)]
         [TestCase(500, 5000)]
-        public void SellBooks_MultipleCopiesOfOneBookCosting_ReturnsCorrectCost_WithMock(int quantity, double expectedCost)
+        public void SellBooks_WithMock_MultipleCopiesOfOneBook_ReturnsCorrectCost(int quantity, double expectedCost)
         {
             Dictionary<int, uint> basket = new Dictionary<int, uint>();
             basket.Add(1, (uint)quantity);
@@ -120,7 +120,7 @@ namespace BookStore.Tests.BusinessLayer
         }
 
         [Test]
-        public void SellBooks_ThreeDifferentBooks_ReturnsCorrectCost_WithMock()
+        public void SellBooks_WithMock_ThreeDifferentBooks_ReturnsCorrectCost()
         {
             Dictionary<int, uint> basket = new Dictionary<int, uint>();
             basket.Add(1, 1);

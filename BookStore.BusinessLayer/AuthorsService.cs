@@ -1,7 +1,9 @@
 ﻿using BookStore.DataLayer;
 using BookStore.DataLayer.Models;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace BookStore.BusinessLayer
@@ -10,11 +12,17 @@ namespace BookStore.BusinessLayer
     {
         public void Add(Author author)
         {
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+
             using (var context = new BookStoresDbContext())
             {
                 context.Authors.Add(author);
                 context.SaveChanges();
             }
+            
+            long ticksElapsed = stopwatch.ElapsedTicks;
+            Log.Information("Dodawanie autora zajęło {ticksElapsed} sekund.", ticksElapsed); 
         }
 
         public List<Author> GetAll()
