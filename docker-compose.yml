@@ -2,11 +2,14 @@ version: "3.9"
 services:
   bookstore:
     build: .
+    image: bookstore:1.1
     restart: on-failure
   mariadb:
     image: mariadb:10.5.8
     ports:
       - '3306:3306'
+    env_file:
+      - .env.pawel
     environment:
       MYSQL_ROOT_PASSWORD: ${PASSWORD}
       #MYSQL_DATABASE: mybb
