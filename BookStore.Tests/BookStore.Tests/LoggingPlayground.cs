@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using Serilog;
 using Serilog.Formatting.Compact;
+using Serilog.Sinks.Elasticsearch;
 using System;
 
 namespace BookStore.Tests
@@ -8,7 +9,6 @@ namespace BookStore.Tests
     [TestFixture]
     class LoggingPlayground
     {
-
         [Test]
         public void BasicLogging()
         {
@@ -87,5 +87,37 @@ namespace BookStore.Tests
             }
         }
 
+        [Test]
+        public void LoggingToElasticsearch()
+        {
+            var logConfiguration = new LoggerConfiguration();
+            logConfiguration.WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri("http://elastic:changeme@localhost:9200") ){
+             AutoRegisterTemplate = true,
+             AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv7,
+             FailureCallback = e => Console.WriteLine("Unable to submit event " + e.MessageTemplate),
+             EmitEventFailure = EmitEventFailureHandling.RaiseCallback | EmitEventFailureHandling.ThrowException
+             });
+
+            Serilog.Core.Logger logger = logConfiguration.CreateLogger();
+
+            logger.Debug("to się nie zaloguje, bo minimalnym poziomem jest Information");
+            logger.Error("błąd!");
+
+            try
+            {
+                throw new Exception("can't find the author!");
+            }
+            catch (Exception e)
+            {
+                logger.Error(e, "operacja zwróciła wyjątek");
+            }
+
+            var złożonyObiekt = new
+            {
+                PierwszePole = 123,
+                DrugiePole = "21314235"
+            };
+            logger.Information("Mój złożony obiekt:{@obiekt}", złożonyObiekt); 
+        }
     }
 }
