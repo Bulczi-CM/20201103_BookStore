@@ -2,8 +2,10 @@ version: "3.9"
 services:
   bookstore:
     build: .
-    image: bookstore:1.1
+    image: bookstore:1.2.1
     restart: on-failure
+    depends_on: 
+      - 'mariadb'
   mariadb:
     image: mariadb:10.5.8
     ports:
@@ -15,12 +17,12 @@ services:
       #MYSQL_DATABASE: mybb
       #MYSQL_USER: mybb
       #MYSQL_PASSWORD: changeme
-    logging:
-      driver: syslog
-      options:
-        tag: "{{.DaemonName}}(image={{.ImageName}};name={{.Name}};id={{.ID}})"
+    #logging:
+    #  driver: syslog
+    #  options:
+    #    tag: "{{.DaemonName}}(image={{.ImageName}};name={{.Name}};id={{.ID}})"
     #networks:
     #  - backend
     restart: on-failure
     volumes:
-     - /mariadb:/var/lib/mysql
+     - /mariadb_2131:/var/lib/mysql

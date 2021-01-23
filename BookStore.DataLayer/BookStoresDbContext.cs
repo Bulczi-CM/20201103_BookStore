@@ -28,6 +28,7 @@ namespace BookStore.DataLayer
             //optionsBuilder.UseNpgsql(@"Host=localhost;Database=postgres;Username=postgres;Password=haselko");
             //optionsBuilder.UseInMemoryDatabase(databaseName: "InMemoryDb");
             optionsBuilder.UseMySql("server=127.0.0.1;port=3306;user=root;password=my-secret-pw;database=database");
+            //optionsBuilder.UseMsSql("...");
         }
     }
 }
