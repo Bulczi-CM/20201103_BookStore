@@ -95,7 +95,8 @@ namespace BookStore.Tests
              AutoRegisterTemplate = true,
              AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv7,
              FailureCallback = e => Console.WriteLine("Unable to submit event " + e.MessageTemplate),
-             EmitEventFailure = EmitEventFailureHandling.RaiseCallback | EmitEventFailureHandling.ThrowException
+             EmitEventFailure = EmitEventFailureHandling.RaiseCallback | EmitEventFailureHandling.ThrowException,
+             
              });
 
             Serilog.Core.Logger logger = logConfiguration.CreateLogger();

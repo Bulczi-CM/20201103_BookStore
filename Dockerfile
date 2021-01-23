@@ -1,4 +1,4 @@
-# https://hub.docker.com/_/microsoft-dotnet
+﻿# https://hub.docker.com/_/microsoft-dotnet
 FROM mcr.microsoft.com/dotnet/sdk:3.1 AS build
 WORKDIR /source
 
@@ -19,9 +19,10 @@ RUN dotnet build -c release --no-restore
 
 # test stage -- exposes optional entrypoint
 # target entrypoint with: docker build --target test
-FROM build AS test
-WORKDIR /source/tests
-COPY tests/ .
+# kolejne FROM - "multi-staged build"; kazdy zaczyna od alpine:latest + artefaktow z argumentu build
+FROM build AS test 
+WORKDIR /source/BookStore.Tests
+COPY BookStore.Tests/ .
 ENTRYPOINT ["dotnet", "test", "--logger:trx"]
 
 FROM build AS publish

@@ -1,0 +1,23 @@
+version: "3.9"
+services:
+  bookstore:
+    build: .
+    restart: on-failure
+  mariadb:
+    image: mariadb:10.5.8
+    ports:
+      - '3306:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: ${PASSWORD}
+      #MYSQL_DATABASE: mybb
+      #MYSQL_USER: mybb
+      #MYSQL_PASSWORD: changeme
+    logging:
+      driver: syslog
+      options:
+        tag: "{{.DaemonName}}(image={{.ImageName}};name={{.Name}};id={{.ID}})"
+    #networks:
+    #  - backend
+    restart: on-failure
+    volumes:
+     - /mariadb:/var/lib/mysql
