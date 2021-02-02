@@ -5,9 +5,8 @@ using Serilog;
 using Serilog.Formatting.Compact;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
+using Unity;
 
 namespace BookStore
 {
@@ -15,8 +14,8 @@ namespace BookStore
     {
         private Menu                      _menu                      = new Menu();
         private IoHelper                  _ioHelper                  = new IoHelper();
-        private BooksService              _booksService              = new BooksService(new BookRepository(), new Notifier(), () => new BookStoresDbContext());
-        private AuthorsService            _authorsService            = new AuthorsService();
+        private BooksService              _booksService;//              = new BooksService(new BookRepository(), new Notifier(), () => new BookStoresDbContext());
+        private AuthorsService            _authorsService            = new AuthorsService(() => new BookStoresDbContext());
         private UsersService              _usersService              = new UsersService();
         private NotificationsService      _notificationService       = new NotificationsService();
         private DatabaseManagementService _databaseManagementService = new DatabaseManagementService();
@@ -31,6 +30,9 @@ namespace BookStore
 
         void Run()
         {
+            var container = new UnityDiContainerProvider().GetContainer();
+            _booksService = container.Resolve<BooksService>();
+
             var logConfiguration = new LoggerConfiguration();
             
             //string relativePath = Path.Combine(Environment.CurrentDirectory, "mojelogi.txt");
