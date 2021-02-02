@@ -25,8 +25,7 @@ namespace BookStore.DataLayer
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            //optionsBuilder.UseNpgsql(@"Host=localhost;Database=postgres;Username=postgres;Password=haselko");
-            optionsBuilder.UseInMemoryDatabase(databaseName: "InMemoryDb");
+            optionsBuilder.UseSqlServer(@"Server=.;Database=CM_20201103_BookStores;Trusted_Connection=True");
         }
     }
 }
