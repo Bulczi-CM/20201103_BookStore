@@ -13,9 +13,16 @@ namespace BookStore.BusinessLayer
 
     public class BookRepository : IBookRepository
     {
+        private Func<IBookStoresDbContext> _bookStoresDbContextFactoryMethod;
+
+        public BookRepository(Func<IBookStoresDbContext> bookStoresDbContextFactoryMethod)
+        {
+            _bookStoresDbContextFactoryMethod = bookStoresDbContextFactoryMethod;
+        }
+
         public Book GetBookById(int id)
         {
-            using(var context = new BookStoresDbContext())
+            using(var context = _bookStoresDbContextFactoryMethod())
             {
                 var book = context.Books
                     .Where(book => book.Id == id)
@@ -27,9 +34,9 @@ namespace BookStore.BusinessLayer
 
         public void Update(Book book)
         {
-            using(var context = new BookStoresDbContext())
+            using(var context = _bookStoresDbContextFactoryMethod())
             {
-                context.Update(book);
+                context.Books.Update(book);
 
                 context.SaveChanges();
             }

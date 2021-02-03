@@ -16,9 +16,9 @@ namespace BookStore
         private IoHelper                  _ioHelper                  = new IoHelper();
         private BooksService              _booksService;//              = new BooksService(new BookRepository(), new Notifier(), () => new BookStoresDbContext());
         private AuthorsService            _authorsService;
-        private UsersService              _usersService              = new UsersService();
+        private UsersService              _usersService;//              = new UsersService();
         private NotificationsService      _notificationService       = new NotificationsService();
-        private DatabaseManagementService _databaseManagementService = new DatabaseManagementService();
+        private DatabaseManagementService _databaseManagementService;// = new DatabaseManagementService();
         private BookStoreService          _bookStoreService;
 
         private bool _exit = false;
@@ -34,6 +34,8 @@ namespace BookStore
             _booksService = container.Resolve<BooksService>();
             _authorsService = container.Resolve<AuthorsService>();
             _bookStoreService = container.Resolve<BookStoreService>();
+            _databaseManagementService = container.Resolve<DatabaseManagementService>();
+            _usersService = container.Resolve<UsersService>();
 
             var logConfiguration = new LoggerConfiguration();
             

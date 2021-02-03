@@ -1,5 +1,6 @@
 ﻿using BookStore.DataLayer.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using System;
 
 namespace BookStore.DataLayer
@@ -11,6 +12,7 @@ namespace BookStore.DataLayer
         DbSet<Bookstore> BookStores { get; set; }
         DbSet<BookStoreBook> BookStoresBooks { get; set; }
         DbSet<User> Users { get; set; }
+        DatabaseFacade Database { get; }
 
         int SaveChanges();
     }
