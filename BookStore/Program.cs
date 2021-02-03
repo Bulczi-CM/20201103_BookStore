@@ -15,11 +15,11 @@ namespace BookStore
         private Menu                      _menu                      = new Menu();
         private IoHelper                  _ioHelper                  = new IoHelper();
         private BooksService              _booksService;//              = new BooksService(new BookRepository(), new Notifier(), () => new BookStoresDbContext());
-        private AuthorsService            _authorsService            = new AuthorsService(() => new BookStoresDbContext());
+        private AuthorsService            _authorsService;
         private UsersService              _usersService              = new UsersService();
         private NotificationsService      _notificationService       = new NotificationsService();
         private DatabaseManagementService _databaseManagementService = new DatabaseManagementService();
-        private BookStoreService          _bookStoreService          = new BookStoreService();
+        private BookStoreService          _bookStoreService;
 
         private bool _exit = false;
 
@@ -32,6 +32,8 @@ namespace BookStore
         {
             var container = new UnityDiContainerProvider().GetContainer();
             _booksService = container.Resolve<BooksService>();
+            _authorsService = container.Resolve<AuthorsService>();
+            _bookStoreService = container.Resolve<BookStoreService>();
 
             var logConfiguration = new LoggerConfiguration();
             

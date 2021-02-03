@@ -1,4 +1,5 @@
 ﻿using BookStore.BusinessLayer;
+using BookStore.BusinessLayer.Serializers;
 using BookStore.DataLayer;
 using System;
 using Unity;
@@ -16,6 +17,7 @@ namespace BookStore
             container.RegisterType<INotifier, Notifier>();
             container.RegisterType<Func<IBookStoresDbContext>>(
                 new InjectionFactory(ctx => new Func<IBookStoresDbContext>(() => new BookStoresDbContext())));
+            container.RegisterType<IDataSerializersFactory, DataSerializersFactory>();
 
             return container;
         }

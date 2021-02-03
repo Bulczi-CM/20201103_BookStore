@@ -9,7 +9,12 @@ namespace BookStore.BusinessLayer.Serializers
         Csv
     }
 
-    public class DataSerializersFactory
+    public interface IDataSerializersFactory
+    {
+        IDataSerializer Create(SerializationFormat format);
+    }
+
+    public class DataSerializersFactory : IDataSerializersFactory
     {
         public IDataSerializer Create(SerializationFormat format)
         {

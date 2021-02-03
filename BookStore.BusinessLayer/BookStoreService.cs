@@ -3,6 +3,7 @@ using BookStore.BusinessLayer.Serializers;
 using BookStore.DataLayer;
 using BookStore.DataLayer.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,11 +12,22 @@ namespace BookStore.BusinessLayer
 {
     public class BookStoreService
     {
-        private DataSerializersFactory _serializersFactory = new DataSerializersFactory();
+        private readonly IDataSerializersFactory _dataSerializersFactory;
+        private readonly Func<IBookStoresDbContext> _dbContextFactoryMethod;
+
+
+        public BookStoreService(
+            IDataSerializersFactory dataSerializersFactory,
+            Func<IBookStoresDbContext> dbContextFactoryMethod)
+        {
+            _dataSerializersFactory = dataSerializersFactory;
+            _dbContextFactoryMethod = dbContextFactoryMethod;
+        }
+
 
         public void Add(Bookstore bookStore)
         {
-            using(var context = new BookStoresDbContext())
+            using (var context = _dbContextFactoryMethod())
             {
                 context.BookStores.Add(bookStore);
                 context.SaveChanges();
@@ -24,7 +36,7 @@ namespace BookStore.BusinessLayer
 
         public void AddBookToBookStore(BookStoreBook bookStoreBook)
         {
-            using (var context = new BookStoresDbContext())
+            using (var context = _dbContextFactoryMethod())
             {
                 context.BookStoresBooks.Add(bookStoreBook);
                 context.SaveChanges();
@@ -33,7 +45,7 @@ namespace BookStore.BusinessLayer
 
         public List<BookStoreUserAssignment> GetBookStoresAssignedToUsers()
         {
-            using (var context = new BookStoresDbContext())
+            using (var context = _dbContextFactoryMethod())
             {
                 var result = context.BookStores
                     .Join(
@@ -59,12 +71,12 @@ namespace BookStore.BusinessLayer
                 return false;
             }
 
-            var serializer = _serializersFactory.Create(format);
+            var serializer = _dataSerializersFactory.Create(format);
 
             var filePath = Path.Combine(targetDirectoryPath, $"offer.{serializer.FileExtension}");
             List<BookStoreBook> offer;
 
-            using (var context = new BookStoresDbContext())
+            using (var context = _dbContextFactoryMethod())
             {
                 offer = context.BookStoresBooks
                     .Include(x => x.Book)
@@ -87,7 +99,7 @@ namespace BookStore.BusinessLayer
                 return null;
             }
 
-            var serializer = _serializersFactory.Create(format);
+            var serializer = _dataSerializersFactory.Create(format);
             var offer = serializer.Deserialize(filePath);
 
             return offer;
