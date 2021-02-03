@@ -9,9 +9,16 @@ namespace BookStore.BusinessLayer
         PhoneNotification
     }
 
-    public class NotificationsService
+    public interface INotificationsService
     {
-        public EventHandler<NewBookEventArgs> SubscribedNotification;
+        EventHandler<NewBookEventArgs> SubscribedNotification { get; }
+        void AddNotification(string authorSurname, CommunicationChannel channel);
+        void ClearNotifications();
+    }
+
+    public class NotificationsService : INotificationsService
+    {
+        public EventHandler<NewBookEventArgs> SubscribedNotification { get; set; }
 
         public void AddNotification(string authorSurname, CommunicationChannel channel)
         {

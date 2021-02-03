@@ -6,7 +6,25 @@ using System.Globalization;
 
 namespace BookStore
 {
-    public class IoHelper
+    public interface IIoHelper
+    {
+        BookGenre GetBookGenreFromUser(string message);
+        bool GetBoolFromUser(string message);
+        CommunicationChannel GetCommunicationChannelFromUser(string message);
+        DateTime GetDateTimeFromUser(string message);
+        float GetFloatFromUser(string message);
+        int GetIntFromUser(string message);
+        SerializationFormat GetSerializationFormatFromUser(string message);
+        string GetTextFromUser(string message);
+        uint GetUintFromUser(string message);
+        void PrintAuthor(Author author);
+        void PrintAuthor(Author author, int index);
+        void PrintBook(Book book);
+        void PrintBook(Book book, int index);
+        void PrintBookStore(Bookstore bookStore);
+    }
+
+    public class IoHelper : IIoHelper
     {
         public string GetTextFromUser(string message)
         {
@@ -28,8 +46,6 @@ namespace BookStore
 
         public float GetFloatFromUser(string message)
         {
-            //return float.Parse(GetTextFromUser(message));
-
             float result;
 
             while (!float.TryParse(GetTextFromUser(message), out result))
@@ -127,7 +143,7 @@ namespace BookStore
             Console.WriteLine(BuildBookString(book));
         }
 
-        internal void PrintBookStore(Bookstore bookStore)
+        public void PrintBookStore(Bookstore bookStore)
         {
             Console.WriteLine($"{bookStore.Name}, Address: {bookStore.Address}");
         }

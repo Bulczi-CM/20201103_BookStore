@@ -9,7 +9,17 @@ using System.Linq;
 
 namespace BookStore.BusinessLayer
 {
-    public class AuthorsService
+    public interface IAuthorsService
+    {
+        void Add(Author author);
+        void Delete(Author author);
+        Author Get(int authorId);
+        List<Author> GetAll();
+        List<Book> GetBooksByAuthoSurname(string surname);
+        void Update(Author author);
+    }
+
+    public class AuthorsService : IAuthorsService
     {
         private readonly Func<IBookStoresDbContext> _bookStoresDbContextFactoryMethod;
 
@@ -29,9 +39,9 @@ namespace BookStore.BusinessLayer
                 context.Authors.Add(author);
                 context.SaveChanges();
             }
-            
+
             long ticksElapsed = stopwatch.ElapsedTicks;
-            Log.Information("Dodawanie autora zajęło {ticksElapsed} sekund.", ticksElapsed); 
+            Log.Information("Dodawanie autora zajęło {ticksElapsed} sekund.", ticksElapsed);
         }
 
         public List<Author> GetAll()

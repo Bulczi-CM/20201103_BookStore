@@ -13,10 +13,12 @@ namespace BookStore.BusinessLayer
     {
         private Func<IBookStoresDbContext> _bookStoresDbContextFactoryMethod;
 
-        public UsersService(Func<IBookStoresDbContext> bookStoresDbContextFactoryMethod)
+        public UsersService(
+            Func<IBookStoresDbContext> bookStoresDbContextFactoryMethod)
         {
             _bookStoresDbContextFactoryMethod = bookStoresDbContextFactoryMethod;
         }
+
         public void Add(User user)
         {
             using (var context = _bookStoresDbContextFactoryMethod())

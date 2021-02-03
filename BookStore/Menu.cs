@@ -3,7 +3,14 @@ using System.Collections.Generic;
 
 namespace BookStore
 {
-    public class Menu
+    public interface IMenu
+    {
+        void AddOption(MenuItem item);
+        void ExecuteOption(int optionKey);
+        void PrintAvailableOptions();
+    }
+
+    public class Menu : IMenu
     {
         private Dictionary<int, MenuItem> _options = new Dictionary<int, MenuItem>();
 
@@ -30,7 +37,7 @@ namespace BookStore
 
         public void PrintAvailableOptions()
         {
-            foreach(var option in _options)
+            foreach (var option in _options)
             {
                 Console.WriteLine($"{option.Key}. {option.Value.Description}");
             }

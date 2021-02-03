@@ -1,59 +1,78 @@
-﻿using BookStore.BusinessLayer;
-using BookStore.DataLayer;
-using BookStore.DataLayer.Models;
-using Serilog;
-using Serilog.Formatting.Compact;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Serilog;
+using Serilog.Formatting.Compact;
 using Unity;
+using BookStore.BusinessLayer;
+using BookStore.DataLayer.Models;
 
 namespace BookStore
 {
     class Program
     {
-        private Menu                      _menu                      = new Menu();
-        private IoHelper                  _ioHelper                  = new IoHelper();
-        private BooksService              _booksService;//              = new BooksService(new BookRepository(), new Notifier(), () => new BookStoresDbContext());
-        private AuthorsService            _authorsService;
-        private UsersService              _usersService;//              = new UsersService();
-        private NotificationsService      _notificationService       = new NotificationsService();
-        private DatabaseManagementService _databaseManagementService;// = new DatabaseManagementService();
-        private BookStoreService          _bookStoreService;
+        private readonly ILogger                    _logger;
+        private readonly IMenu                      _menu;
+        private readonly IIoHelper                  _ioHelper;
+        private readonly IBooksService              _booksService;
+        private readonly IAuthorsService            _authorsService;
+        private readonly IUsersService              _usersService;
+        private readonly INotificationsService      _notificationService;
+        private readonly IDatabaseManagementService _databaseManagementService;
+        private readonly IBookStoreService          _bookStoreService;
 
         private bool _exit = false;
 
         static void Main()
         {
-             new Program().Run();
+            SetUpLogger();
+            var container = new UnityDiContainerProvider().GetContainer();
+
+            container.Resolve<Program>().Run();
         }
 
-        void Run()
+        private static void SetUpLogger()
         {
-            var container = new UnityDiContainerProvider().GetContainer();
-            _booksService = container.Resolve<BooksService>();
-            _authorsService = container.Resolve<AuthorsService>();
-            _bookStoreService = container.Resolve<BookStoreService>();
-            _databaseManagementService = container.Resolve<DatabaseManagementService>();
-            _usersService = container.Resolve<UsersService>();
-
             var logConfiguration = new LoggerConfiguration();
-            
+
             //string relativePath = Path.Combine(Environment.CurrentDirectory, "mojelogi.txt");
             string absolutePath = "C:/logi/log.txt";
 
             logConfiguration
                 .WriteTo.File(absolutePath, Serilog.Events.LogEventLevel.Debug)
-                .WriteTo.Console(new CompactJsonFormatter())
-                ;
-            
-            Serilog.Core.Logger logger = logConfiguration.CreateLogger();
+                .WriteTo.Console(new CompactJsonFormatter());
 
+            Serilog.Core.Logger logger = logConfiguration.CreateLogger();
             Serilog.Debugging.SelfLog.Enable(msg => Console.WriteLine(msg));
 
             Log.Logger = logger; // setting as global logger - now it'll be used whenever somebody calls Log.Error(), Log.Debug() etc.
-            
-            Log.Information("Aplikacja uruchomiona!");
+        }
+
+        public Program(
+            ILogger logger,
+            IMenu menu,
+            IIoHelper ioHelper,
+            IBooksService booksService,
+            IAuthorsService authorsService,
+            IUsersService usersService,
+            INotificationsService notificationService,
+            IDatabaseManagementService databaseManagementService,
+            IBookStoreService bookStoreService)
+        {
+            _logger = logger;
+            _menu = menu;
+            _ioHelper = ioHelper;
+            _booksService = booksService;
+            _authorsService = authorsService;
+            _usersService = usersService;
+            _notificationService = notificationService;
+            _databaseManagementService = databaseManagementService;
+            _bookStoreService = bookStoreService;
+        }
+
+        void Run()
+        {
+            _logger.Information("Aplikacja uruchomiona!");
 
             _databaseManagementService.EnsureDatabaseCreation();
             RegisterMenuOptions();

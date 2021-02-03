@@ -10,11 +10,19 @@ using System.Linq;
 
 namespace BookStore.BusinessLayer
 {
-    public class BookStoreService
+    public interface IBookStoreService
+    {
+        void Add(Bookstore bookStore);
+        void AddBookToBookStore(BookStoreBook bookStoreBook);
+        List<BookStoreBook> DeserializeOffer(string filePath, SerializationFormat format);
+        List<BookStoreUserAssignment> GetBookStoresAssignedToUsers();
+        bool SerializeOffer(string targetDirectoryPath, SerializationFormat format);
+    }
+
+    public class BookStoreService : IBookStoreService
     {
         private readonly IDataSerializersFactory _dataSerializersFactory;
         private readonly Func<IBookStoresDbContext> _dbContextFactoryMethod;
-
 
         public BookStoreService(
             IDataSerializersFactory dataSerializersFactory,
@@ -23,7 +31,6 @@ namespace BookStore.BusinessLayer
             _dataSerializersFactory = dataSerializersFactory;
             _dbContextFactoryMethod = dbContextFactoryMethod;
         }
-
 
         public void Add(Bookstore bookStore)
         {
@@ -66,7 +73,7 @@ namespace BookStore.BusinessLayer
 
         public bool SerializeOffer(string targetDirectoryPath, SerializationFormat format)
         {
-            if(!Directory.Exists(targetDirectoryPath))
+            if (!Directory.Exists(targetDirectoryPath))
             {
                 return false;
             }

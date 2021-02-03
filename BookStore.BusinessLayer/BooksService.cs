@@ -8,17 +8,29 @@ using Serilog;
 
 namespace BookStore.BusinessLayer
 {
-    public class BooksService
+    public interface IBooksService
     {
-        private IBookRepository _bookRepository;
-        private INotifier _notifier;
-        private Func<IBookStoresDbContext> _dbContextFactoryMethod;
+        void AddBook(Book book);
+        List<Book> GetAllBooks();
+        List<Bookstore> GetBookAvailability(int bookId);
+        float SellBooks(Dictionary<int, uint> basket);
+        bool UpdateBookQuantity(int bookId, uint quantity);
+    }
+
+    public class BooksService : IBooksService
+    {
+        private readonly ILogger _logger;
+        private readonly IBookRepository _bookRepository;
+        private readonly INotifier _notifier;
+        private readonly Func<IBookStoresDbContext> _dbContextFactoryMethod;
 
         public BooksService(
+            ILogger logger,
             IBookRepository bookRepository,
             INotifier notifier,
             Func<IBookStoresDbContext> dbContextFactoryMethod)
         {
+            _logger = logger;
             _bookRepository = bookRepository;
             _notifier = notifier;
             _dbContextFactoryMethod = dbContextFactoryMethod;
@@ -30,8 +42,8 @@ namespace BookStore.BusinessLayer
             {
                 context.Books.Add(book);
                 context.SaveChanges();
-                
-                Log.Information("Kupiono książkę!");
+
+                _logger.Information("Kupiono książkę!");
             }
         }
 
@@ -47,12 +59,12 @@ namespace BookStore.BusinessLayer
 
         public bool UpdateBookQuantity(int bookId, uint quantity)
         {   //TODO - Co sie stanie, jezeli tutaj bedzie Book book a nie int bookId
-            using(var context = new BookStoresDbContext())
+            using (var context = new BookStoresDbContext())
             {
                 var book = context.Books
                     .FirstOrDefault(book => book.Id == bookId);
 
-                if(book == null)
+                if (book == null)
                 {
                     return false;
                 }
@@ -78,17 +90,17 @@ namespace BookStore.BusinessLayer
 
         public float SellBooks(Dictionary<int, uint> basket)
         {
-            if(basket.Count() == 0)
+            if (basket.Count() == 0)
             {
                 return 0.0f;
             }
 
             var cost = 0.0f;
 
-            foreach(KeyValuePair<int, uint> item in basket)
+            foreach (KeyValuePair<int, uint> item in basket)
             {
                 var book = _bookRepository.GetBookById(item.Key);
-                 
+
                 if (book == null)
                 {
                     continue;
@@ -101,7 +113,7 @@ namespace BookStore.BusinessLayer
                 _bookRepository.Update(book);
             }
 
-            if(cost > 0)
+            if (cost > 0)
                 _notifier.Notify("udało się sprzedać książkę!!!! zarobiliśmy całe " + cost + " złotych!");
 
             return cost;
