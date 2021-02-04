@@ -15,7 +15,7 @@ namespace BookStore.BusinessLayer
         void Add(Bookstore bookStore);
         void AddBookToBookStore(BookStoreBook bookStoreBook);
         List<BookStoreBook> DeserializeOffer(string filePath, SerializationFormat format);
-        List<BookStoreUserAssignment> GetBookStoresAssignedToUsers();
+        //List<BookStoreUserAssignment> GetBookStoresAssignedToUsers();
         bool SerializeOffer(string targetDirectoryPath, SerializationFormat format);
     }
 
@@ -50,26 +50,26 @@ namespace BookStore.BusinessLayer
             }
         }
 
-        public List<BookStoreUserAssignment> GetBookStoresAssignedToUsers()
-        {
-            using (var context = _dbContextFactoryMethod())
-            {
-                var result = context.BookStores
-                    .Join(
-                        context.Users,
-                        bookStore => bookStore.Address,
-                        user => user.City,
-                        (bookStore, user) => new BookStoreUserAssignment
-                        {
-                            BookStoreName = bookStore.Name,
-                            City = user.City,
-                            Login = user.Login
-                        })
-                        .ToList();
+        //public List<BookStoreUserAssignment> GetBookStoresAssignedToUsers()
+        //{
+        //    using (var context = _dbContextFactoryMethod())
+        //    {
+        //        var result = context.BookStores
+        //            .Join(
+        //                context.Users,
+        //                bookStore => bookStore.Address,
+        //                user => user.City,
+        //                (bookStore, user) => new BookStoreUserAssignment
+        //                {
+        //                    BookStoreName = bookStore.Name,
+        //                    City = user.City,
+        //                    Login = user.Login
+        //                })
+        //                .ToList();
 
-                return result;
-            }
-        }
+        //        return result;
+        //    }
+        //}
 
         public bool SerializeOffer(string targetDirectoryPath, SerializationFormat format)
         {

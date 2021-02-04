@@ -104,8 +104,6 @@ namespace BookStore
             _menu.AddOption(new MenuItem { Key = 12, Action = AddUser,                  Description = "Add new user" });
             _menu.AddOption(new MenuItem { Key = 13, Action = GetRecommendedBookStores, Description = "Get bookstores recommended for users" });
 
-            _menu.AddOption(new MenuItem { Key = 20, Action = BookArrivalNotification,  Description = "Post notification when new book arrives" });
-
             _menu.AddOption(new MenuItem { Key = 30, Action = ExportOfferToFile,        Description = "Export offer to file" });
             _menu.AddOption(new MenuItem { Key = 31, Action = ImportOfferFromFile,      Description = "Import offer from file" });
 
@@ -142,12 +140,12 @@ namespace BookStore
 
         private void GetRecommendedBookStores()
         {
-            var recommendations = _bookStoreService.GetBookStoresAssignedToUsers();
+            //var recommendations = _bookStoreService.GetBookStoresAssignedToUsers();
 
-            foreach(var recommendation in recommendations)
-            {
-                Console.WriteLine($"{recommendation.Login} {recommendation.City} {recommendation.BookStoreName}");
-            }
+            //foreach(var recommendation in recommendations)
+            //{
+            //    Console.WriteLine($"{recommendation.Login} {recommendation.City} {recommendation.BookStoreName}");
+            //}
         }
 
         private void AddUser()
@@ -285,10 +283,8 @@ namespace BookStore
             _booksService.AddBook(newBook);
             Console.WriteLine("Book added successfully");
 
-            if (_notificationService.SubscribedNotification != null)
-            {
-                _notificationService.SubscribedNotification(this, new NewBookEventArgs { Book = newBook });
-            }
+            //TODO Move to AddBook
+            _notificationService.NotifyNewBookArrival(newBook);
         }
 
         private void PrintAllBooks()
@@ -392,14 +388,6 @@ namespace BookStore
             float cost = _booksService.SellBooks(basket);
 
             Console.WriteLine($"Recipt: ${cost}");
-        }
-
-        private void BookArrivalNotification()
-        {
-            var authorSurname = _ioHelper.GetTextFromUser("Enter author surname");
-            var communicationChannel = _ioHelper.GetCommunicationChannelFromUser("Enter communication channel");
-
-            _notificationService.AddNotification(authorSurname, communicationChannel);
         }
     }
 }

@@ -97,24 +97,24 @@ namespace BookStore.BusinessLayer
 
             var cost = 0.0f;
 
-            foreach (KeyValuePair<int, uint> item in basket)
-            {
-                var book = _bookRepository.GetBookById(item.Key);
+            //foreach (KeyValuePair<int, uint> item in basket)
+            //{
+            //    var book = _bookRepository.GetBookById(item.Key);
 
-                if (book == null)
-                {
-                    continue;
-                }
+            //    if (book == null)
+            //    {
+            //        continue;
+            //    }
 
-                cost += book.Price * item.Value;
-                book.CopiesCount -= item.Value;
+            //    cost += book.Price * item.Value;
+            //    book.CopiesCount -= item.Value;
 
 
-                _bookRepository.Update(book);
-            }
+            //    _bookRepository.Update(book);
+            //}
 
-            if (cost > 0)
-                _notifier.Notify("udało się sprzedać książkę!!!! zarobiliśmy całe " + cost + " złotych!");
+            //if (cost > 0)
+            //    _notifier.Notify("udało się sprzedać książkę!!!! zarobiliśmy całe " + cost + " złotych!");
 
             return cost;
         }

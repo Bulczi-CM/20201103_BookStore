@@ -7,7 +7,7 @@ namespace BookStore.BusinessLayer
 {
     public interface IBookRepository
     {
-        public Book GetBookById(int id);
+        //public Book GetBookById(int id);
         void Update(Book book);
     }
 
@@ -20,17 +20,17 @@ namespace BookStore.BusinessLayer
             _bookStoresDbContextFactoryMethod = bookStoresDbContextFactoryMethod;
         }
 
-        public Book GetBookById(int id)
-        {
-            using(var context = _bookStoresDbContextFactoryMethod())
-            {
-                var book = context.Books
-                    .Where(book => book.Id == id)
-                    .FirstOrDefault();
+        //public Book GetBookById(int id)
+        //{
+        //    using (var context = _bookStoresDbContextFactoryMethod())
+        //    {
+        //        var book = context.Books
+        //            .Where(book => book.Id == id)
+        //            .FirstOrDefault();
 
-                return book;
-            }
-        }
+        //        return book;
+        //    }
+        //}
 
         public void Update(Book book)
         {

@@ -10,7 +10,6 @@ namespace BookStore
     {
         BookGenre GetBookGenreFromUser(string message);
         bool GetBoolFromUser(string message);
-        CommunicationChannel GetCommunicationChannelFromUser(string message);
         DateTime GetDateTimeFromUser(string message);
         float GetFloatFromUser(string message);
         int GetIntFromUser(string message);
@@ -166,24 +165,6 @@ namespace BookStore
         private string BuildAuthorString(Author author)
         {
             return $"{author.Surname} {author.Name} ({author.BirthDate})";
-        }
-
-        public CommunicationChannel GetCommunicationChannelFromUser(string message)
-        {
-            var correctValues = "";
-
-            foreach (var commChannel in (CommunicationChannel[])Enum.GetValues(typeof(CommunicationChannel)))
-            {
-                correctValues += $"{commChannel},";
-            }
-
-            object result;
-            while (!Enum.TryParse(typeof(CommunicationChannel), GetTextFromUser($"{message} ({correctValues}):"), out result))
-            {
-                Console.WriteLine("Not a correct value - use one from the brackets. Try again...");
-            }
-
-            return (CommunicationChannel)result;
         }
     }
 }

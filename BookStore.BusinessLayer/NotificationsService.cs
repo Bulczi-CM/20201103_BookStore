@@ -1,58 +1,38 @@
 ﻿using BookStore.DataLayer.Models;
-using System;
+using EventStore.Client;
+using System.Text.Json;
 
 namespace BookStore.BusinessLayer
 {
-    public enum CommunicationChannel
-    {
-        Email,
-        PhoneNotification
-    }
-
     public interface INotificationsService
     {
-        EventHandler<NewBookEventArgs> SubscribedNotification { get; }
-        void AddNotification(string authorSurname, CommunicationChannel channel);
-        void ClearNotifications();
+        void NotifyNewBookArrival(Book newBook);
     }
 
     public class NotificationsService : INotificationsService
     {
-        public EventHandler<NewBookEventArgs> SubscribedNotification { get; set; }
-
-        public void AddNotification(string authorSurname, CommunicationChannel channel)
+        public void NotifyNewBookArrival(Book newBook)
         {
-            switch (channel)
+            const string stream = "bookstore-newbook-stream";
+            const int defaultPort = 2113;
+
+            var settings = EventStoreClientSettings.Create($"esdb://127.0.0.1:{defaultPort}?Tls=false");
+
+            using (var client = new EventStoreClient(settings))
             {
-                case CommunicationChannel.Email:
-                    SubscribedNotification += SendEmailChannelNotification;
-                    break;
-                case CommunicationChannel.PhoneNotification:
-                    SubscribedNotification += PopPhoneNotification;
-                    break;
-                default:
-                    break;
+                client.AppendToStreamAsync(
+                    stream,
+                    StreamState.Any,
+                    new[] { GetEventDataFor(newBook) }).Wait();
             }
         }
 
-        private void SendEmailChannelNotification(object sender, NewBookEventArgs e)
+        private static EventData GetEventDataFor(Book data)
         {
-            Console.WriteLine($"Sending e-mail notification about new books to users: {e.Book.Title}");
+            return new EventData(
+                Uuid.NewUuid(),
+                "new-book-arrival",
+                JsonSerializer.SerializeToUtf8Bytes(data));
         }
-
-        private void PopPhoneNotification(object sender, NewBookEventArgs e)
-        {
-            Console.WriteLine($"Poping up phone notification about new books to users: {e.Book.Title}");
-        }
-
-        public void ClearNotifications()
-        {
-            SubscribedNotification = null;
-        }
-    }
-
-    public class NewBookEventArgs
-    {
-        public Book Book;
     }
 }
