@@ -30,7 +30,7 @@ steps:
 - task: VSTest@2
   inputs:
     testSelector: 'testAssemblies'
-    testAssemblyVer2: '*.Tests/*.Tests/bin/$(BuildConfiguration)/**/*.Tests.dll'
+    testAssemblyVer2: 'BookStore.Tests\BookStore.Tests\bin\$(BuildConfiguration)\netcoreapp3.1\BookStore.Tests.dll'
     searchFolder: '$(System.DefaultWorkingDirectory)'
 
 - task: NuGetCommand@2
