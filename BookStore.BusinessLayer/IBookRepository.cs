@@ -8,17 +8,17 @@ namespace BookStore.BusinessLayer
     public interface IBookRepository
     {
         //public Book GetBookById(int id);
-        void Update(Book book);
+        //void Update(Book book);
     }
 
     public class BookRepository : IBookRepository
     {
-        private Func<IBookStoresDbContext> _bookStoresDbContextFactoryMethod;
+        //private Func<IBookStoresDbContext> _bookStoresDbContextFactoryMethod;
 
-        public BookRepository(Func<IBookStoresDbContext> bookStoresDbContextFactoryMethod)
-        {
-            _bookStoresDbContextFactoryMethod = bookStoresDbContextFactoryMethod;
-        }
+        //public BookRepository(Func<IBookStoresDbContext> bookStoresDbContextFactoryMethod)
+        //{
+        //    _bookStoresDbContextFactoryMethod = bookStoresDbContextFactoryMethod;
+        //}
 
         //public Book GetBookById(int id)
         //{
@@ -32,14 +32,14 @@ namespace BookStore.BusinessLayer
         //    }
         //}
 
-        public void Update(Book book)
-        {
-            using(var context = _bookStoresDbContextFactoryMethod())
-            {
-                context.Books.Update(book);
+        //public void Update(Book book)
+        //{
+        //    using(var context = _bookStoresDbContextFactoryMethod())
+        //    {
+        //        context.Books.Update(book);
 
-                context.SaveChanges();
-            }
-        }
+        //        context.SaveChanges();
+        //    }
+        //}
     }
 }

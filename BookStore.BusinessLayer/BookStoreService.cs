@@ -14,9 +14,11 @@ namespace BookStore.BusinessLayer
     {
         void Add(Bookstore bookStore);
         void AddBookToBookStore(BookStoreBook bookStoreBook);
+        List<int> GetAllBookStoresIds();
         List<BookStoreBook> DeserializeOffer(string filePath, SerializationFormat format);
         //List<BookStoreUserAssignment> GetBookStoresAssignedToUsers();
         bool SerializeOffer(string targetDirectoryPath, SerializationFormat format);
+        List<BookStoreBook> GetOffer(int bookStoreId);
     }
 
     public class BookStoreService : IBookStoreService
@@ -48,6 +50,25 @@ namespace BookStore.BusinessLayer
                 context.BookStoresBooks.Add(bookStoreBook);
                 context.SaveChanges();
             }
+        }
+
+        public List<BookStoreBook> GetOffer(int bookStoreId)
+        {
+            List<BookStoreBook> offer;
+
+            using (var context = _dbContextFactoryMethod())
+            {
+                offer = context.BookStoresBooks
+                    .Include(x => x.Book)
+                    .Include(x => x.Book.Author)
+                    .Include(x => x.BookStore)
+                    .Where(x => x.BookStore.Id == bookStoreId)
+                    .ToList();
+
+                offer.ForEach(x => x.Book.Author.Books = null);
+            }
+
+            return offer;
         }
 
         //public List<BookStoreUserAssignment> GetBookStoresAssignedToUsers()
@@ -110,6 +131,17 @@ namespace BookStore.BusinessLayer
             var offer = serializer.Deserialize(filePath);
 
             return offer;
+        }
+
+        public List<int> GetAllBookStoresIds()
+        {
+            using (var context = _dbContextFactoryMethod())
+            {
+                return context.BookStores
+                    .AsQueryable()
+                    .Select(x => x.Id)
+                    .ToList();
+            }
         }
     }
 }

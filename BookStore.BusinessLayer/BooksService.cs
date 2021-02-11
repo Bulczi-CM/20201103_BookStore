@@ -20,18 +20,15 @@ namespace BookStore.BusinessLayer
     public class BooksService : IBooksService
     {
         private readonly ILogger _logger;
-        private readonly IBookRepository _bookRepository;
         private readonly INotifier _notifier;
         private readonly Func<IBookStoresDbContext> _dbContextFactoryMethod;
 
         public BooksService(
             ILogger logger,
-            IBookRepository bookRepository,
             INotifier notifier,
             Func<IBookStoresDbContext> dbContextFactoryMethod)
         {
             _logger = logger;
-            _bookRepository = bookRepository;
             _notifier = notifier;
             _dbContextFactoryMethod = dbContextFactoryMethod;
         }
@@ -90,31 +87,30 @@ namespace BookStore.BusinessLayer
 
         public float SellBooks(Dictionary<int, uint> basket)
         {
-            if (basket.Count() == 0)
-            {
-                return 0.0f;
-            }
-
             var cost = 0.0f;
 
-            //foreach (KeyValuePair<int, uint> item in basket)
-            //{
-            //    var book = _bookRepository.GetBookById(item.Key);
+            using (var context = _dbContextFactoryMethod())
+            {
+                foreach (KeyValuePair<int, uint> item in basket)
+                {
+                    var book = context.Books.FirstOrDefault(x => x.Id == item.Key);
+    
+                    if (book == null)
+                    {
+                        continue;
+                    }
 
-            //    if (book == null)
-            //    {
-            //        continue;
-            //    }
+                    cost += book.Price * item.Value;
+                    book.CopiesCount -= item.Value;
+                }
 
-            //    cost += book.Price * item.Value;
-            //    book.CopiesCount -= item.Value;
+                context.SaveChanges();
+            }
 
-
-            //    _bookRepository.Update(book);
-            //}
-
-            //if (cost > 0)
-            //    _notifier.Notify("udało się sprzedać książkę!!!! zarobiliśmy całe " + cost + " złotych!");
+            if (cost > 0)
+            {
+                _notifier.Notify("udało się sprzedać książkę!!!! zarobiliśmy całe " + cost + " złotych!");
+            }
 
             return cost;
         }
