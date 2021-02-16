@@ -5,13 +5,15 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using Serilog;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace BookStore.BusinessLayer
 {
     public interface IBooksService
     {
         void AddBook(Book book);
-        List<Book> GetAllBooks();
+        Task<List<Book>> GetAllBooksAsync();
         List<Bookstore> GetBookAvailability(int bookId);
         float SellBooks(Dictionary<int, uint> basket);
         bool UpdateBookQuantity(int bookId, uint quantity);
@@ -44,13 +46,32 @@ namespace BookStore.BusinessLayer
             }
         }
 
-        public List<Book> GetAllBooks()
+        //public Task<List<Book>> GetAllBooks()
+        //{
+        //    var task = new Task<List<Book>>(() =>
+        //    {
+        //        using (var context = new BookStoresDbContext())
+        //        {
+        //            Thread.Sleep(20000);
+
+        //            return context.Books
+        //                .Include(book => book.Author) //<== to sprawi, ze w ksiazce beda tez dane autora
+        //                .ToList();
+        //        }
+        //    });
+
+        //    task.Start();
+
+        //    return task;
+        //}
+
+        public async Task<List<Book>> GetAllBooksAsync()
         {
             using (var context = new BookStoresDbContext())
             {
-                return context.Books
-                    .Include(book => book.Author) //<== to sprawi, ze w ksiazce beda tez dane autora
-                    .ToList();
+                return await context.Books
+                    .Include(book => book.Author)
+                    .ToListAsync();
             }
         }
 

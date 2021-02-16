@@ -6,6 +6,7 @@ using Serilog.Formatting.Compact;
 using Unity;
 using BookStore.BusinessLayer;
 using BookStore.DataLayer.Models;
+using System.Threading.Tasks;
 
 namespace BookStore
 {
@@ -93,9 +94,9 @@ namespace BookStore
             _menu.AddOption(new MenuItem { Key =  1, Action = AddAuthor,                Description = "Add new author" });
             _menu.AddOption(new MenuItem { Key =  2, Action = AddBook,                  Description = "Add new book" });
             _menu.AddOption(new MenuItem { Key =  3, Action = AddBookStore,             Description = "Add new bookstore" });
-            _menu.AddOption(new MenuItem { Key =  4, Action = PrintAllBooks,            Description = "Print all books" });
-            _menu.AddOption(new MenuItem { Key =  5, Action = ChangeStockForBook,       Description = "Change stock for book" });
-            _menu.AddOption(new MenuItem { Key =  6, Action = SellBooks,                Description = "Sell some books" });
+            _menu.AddOption(new MenuItem { Key =  4, Action = PrintAllBooksAsync,       Description = "Print all books" });
+            _menu.AddOption(new MenuItem { Key =  5, Action = ChangeStockForBookAsync,  Description = "Change stock for book" });
+            _menu.AddOption(new MenuItem { Key =  6, Action = SellBooksAsync,           Description = "Sell some books" });
             _menu.AddOption(new MenuItem { Key =  7, Action = FindBooksByAuthorSurname, Description = "Find books by author surname" });
             _menu.AddOption(new MenuItem { Key =  8, Action = AddBookToBookStore,       Description = "Add book to bookstore" });
             _menu.AddOption(new MenuItem { Key =  9, Action = FindBookInBookStores,     Description = "Find book in bookstores" });
@@ -287,9 +288,10 @@ namespace BookStore
             _notificationService.NotifyNewBookArrival(newBook);
         }
 
-        private void PrintAllBooks()
+        private async void PrintAllBooksAsync()
         {
-            PrintBooks(_booksService.GetAllBooks());
+            var books = await _booksService.GetAllBooksAsync();
+            PrintBooks(books);
         }
 
         private void PrintBooks(List<Book> books, bool printIndex = false)
@@ -326,9 +328,9 @@ namespace BookStore
             }
         }
 
-        private void ChangeStockForBook()
+        private async void ChangeStockForBookAsync()
         {
-            int index = GetBookIndexFromUser();
+            int index = await GetBookIndexFromUserAsync();
             uint quantity = _ioHelper.GetUintFromUser("Enter new copies count");
 
             bool success = _booksService.UpdateBookQuantity(index, quantity);
@@ -342,9 +344,9 @@ namespace BookStore
             //    : "Number is smaller or equal 1000";
         }
 
-        private int GetBookIndexFromUser()
+        private async Task<int> GetBookIndexFromUserAsync()
         {
-            List<Book> books = _booksService.GetAllBooks();
+            List<Book> books = await _booksService.GetAllBooksAsync();
 
             PrintBooks(books, true);
 
@@ -363,14 +365,14 @@ namespace BookStore
             }
         }
 
-        private void SellBooks()
+        private async void SellBooksAsync()
         {
             bool exit = false;
             Dictionary<int, uint> basket = new Dictionary<int, uint>();
 
             while (!exit)
             {
-                int index = GetBookIndexFromUser();
+                int index = await GetBookIndexFromUserAsync();
                 uint quantity = _ioHelper.GetUintFromUser("How many copies");
 
                 if (basket.ContainsKey(index))
