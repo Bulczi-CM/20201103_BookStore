@@ -16,9 +16,9 @@ namespace BookStore.BusinessLayer
         Task AddAsync(Bookstore bookStore);
         Task AddBookToBookStoreAsync(BookStoreBook bookStoreBook);
         List<int> GetAllBookStoresIds();
-        List<BookStoreBook> DeserializeOffer(string filePath, SerializationFormat format);
+        Task <List<BookStoreBook>> DeserializeOfferAsync(string filePath, SerializationFormat format);
         //List<BookStoreUserAssignment> GetBookStoresAssignedToUsers();
-        bool SerializeOffer(string targetDirectoryPath, SerializationFormat format);
+        Task <bool> SerializeOfferAsync(string targetDirectoryPath, SerializationFormat format);
         List<BookStoreBook> GetOffer(int bookStoreId);
     }
 
@@ -93,7 +93,7 @@ namespace BookStore.BusinessLayer
         //    }
         //}
 
-        public bool SerializeOffer(string targetDirectoryPath, SerializationFormat format)
+        public async Task<bool> SerializeOfferAsync(string targetDirectoryPath, SerializationFormat format)
         {
             if (!Directory.Exists(targetDirectoryPath))
             {
@@ -116,12 +116,12 @@ namespace BookStore.BusinessLayer
                 offer.ForEach(x => x.Book.Author.Books = null);
             }
 
-            serializer.Serialize(filePath, offer);
+            await serializer.SerializeAsync(filePath, offer);
 
             return true;
         }
 
-        public List<BookStoreBook> DeserializeOffer(string filePath, SerializationFormat format)
+        public async Task<List<BookStoreBook>> DeserializeOfferAsync(string filePath, SerializationFormat format)
         {
             if (!File.Exists(filePath))
             {
@@ -129,7 +129,7 @@ namespace BookStore.BusinessLayer
             }
 
             var serializer = _dataSerializersFactory.Create(format);
-            var offer = serializer.Deserialize(filePath);
+            var offer = await serializer.DeserializeAsync(filePath);
 
             return offer;
         }

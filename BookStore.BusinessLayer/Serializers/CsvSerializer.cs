@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace BookStore.BusinessLayer.Serializers
 {
@@ -9,7 +10,7 @@ namespace BookStore.BusinessLayer.Serializers
     {
         public string FileExtension => "csv";
 
-        public void Serialize(string path, List<BookStoreBook> offer)
+        public async Task SerializeAsync(string path, List<BookStoreBook> offer)
         {
             var serializedOfferBuilder = new StringBuilder();
 
@@ -20,12 +21,12 @@ namespace BookStore.BusinessLayer.Serializers
                     $"{item.Book.Author.Name},{item.Book.Author.Surname}");
             }
 
-            File.WriteAllText(path, serializedOfferBuilder.ToString());
+            await File.WriteAllTextAsync(path, serializedOfferBuilder.ToString());
         }
 
-        public List<BookStoreBook> Deserialize(string path)
+        public async Task<List<BookStoreBook>> DeserializeAsync(string path)
         {
-            var serializedOfferLines = File.ReadAllLines(path);
+            var serializedOfferLines = await File.ReadAllLinesAsync(path);
             var offer = new List<BookStoreBook>();
 
             foreach (var line in serializedOfferLines)

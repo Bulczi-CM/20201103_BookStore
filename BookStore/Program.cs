@@ -111,12 +111,12 @@ namespace BookStore
             _menu.AddOption(new MenuItem { Key = 99, Action = () => { _exit = true; },  Description = "Close the application" });
         }
 
-        private void ImportOfferFromFile()
+        private async void ImportOfferFromFile()
         {
             var filePath = _ioHelper.GetTextFromUser("Enter file path");
             var format = _ioHelper.GetSerializationFormatFromUser("Choose file format");
 
-            var offer = _bookStoreService.DeserializeOffer(filePath, format);
+            var offer = await _bookStoreService.DeserializeOfferAsync(filePath, format);
 
             foreach(var item in offer)
             {
@@ -124,12 +124,12 @@ namespace BookStore
             }
         }
 
-        private void ExportOfferToFile()
+        private async void ExportOfferToFile()
         {
             var targetPath = _ioHelper.GetTextFromUser("Enter target path");
             var format = _ioHelper.GetSerializationFormatFromUser("Choose file format");
 
-            if (_bookStoreService.SerializeOffer(targetPath, format))
+            if (await _bookStoreService.SerializeOfferAsync(targetPath, format))
             {
                 Console.WriteLine("Offer exported successfully");
             }

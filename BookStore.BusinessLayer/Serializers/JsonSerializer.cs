@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace BookStore.BusinessLayer.Serializers
 {
@@ -9,15 +10,15 @@ namespace BookStore.BusinessLayer.Serializers
     {
         public string FileExtension => "json";
 
-        public void Serialize(string filePath, List<BookStoreBook> dataSet)
+        public async Task SerializeAsync(string filePath, List<BookStoreBook> dataSet)
         {
             var jsonData = JsonConvert.SerializeObject(dataSet, Formatting.Indented);
-            File.WriteAllText(filePath, jsonData);
+            await File.WriteAllTextAsync(filePath, jsonData);
         }
 
-        public List<BookStoreBook> Deserialize(string filePath)
+        public async Task<List<BookStoreBook>> DeserializeAsync(string filePath)
         {
-            var jsonData = File.ReadAllText(filePath);
+            var jsonData = await File.ReadAllTextAsync(filePath);
             var offer = JsonConvert.DeserializeObject<List<BookStoreBook>>(jsonData);
 
             return offer;
