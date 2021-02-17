@@ -62,7 +62,7 @@ namespace BookStore.Tests.BusinessLayer
                 notifierMock.Object,
                 _contextFactoryMethod);
 
-            var result = sut.SellBooks(basket);
+            var result = sut.SellBooksAsync(basket);
 
             //Arrange
             Assert.AreEqual(350, result);
@@ -94,7 +94,7 @@ namespace BookStore.Tests.BusinessLayer
                 notifierMock.Object,
                 _contextFactoryMethod);
 
-            var result = sut.SellBooks(basket);
+            var result = sut.SellBooksAsync(basket);
 
             //Arrange
             Assert.AreEqual(0, result);

@@ -15,8 +15,8 @@ namespace BookStore.BusinessLayer
         Task AddBookAsync(Book book);
         Task<List<Book>> GetAllBooksAsync();
         Task<List<Bookstore>> GetBookAvailabilityAsync(int bookId);
-        float SellBooks(Dictionary<int, uint> basket);
-        bool UpdateBookQuantity(int bookId, uint quantity);
+        Task<float> SellBooksAsync(Dictionary<int, uint> basket);
+        Task<bool> UpdateBookQuantityAsync(int bookId, uint quantity);
     }
 
     public class BooksService : IBooksService
@@ -75,7 +75,7 @@ namespace BookStore.BusinessLayer
             }
         }
 
-        public bool UpdateBookQuantity(int bookId, uint quantity)
+        public async Task<bool> UpdateBookQuantityAsync(int bookId, uint quantity)
         {   //TODO - Co sie stanie, jezeli tutaj bedzie Book book a nie int bookId
             using (var context = new BookStoresDbContext())
             {
@@ -88,7 +88,7 @@ namespace BookStore.BusinessLayer
                 }
 
                 book.CopiesCount = quantity;
-                context.SaveChanges();
+                await context.SaveChangesAsync();
             }
 
             return true;
@@ -107,7 +107,7 @@ namespace BookStore.BusinessLayer
             }
         }
 
-        public float SellBooks(Dictionary<int, uint> basket)
+        public async Task<float> SellBooksAsync(Dictionary<int, uint> basket)
         {
             var cost = 0.0f;
 
@@ -126,7 +126,7 @@ namespace BookStore.BusinessLayer
                     book.CopiesCount -= item.Value;
                 }
 
-                context.SaveChanges();
+                await context.SaveChangesAsync();
             }
 
             if (cost > 0)
