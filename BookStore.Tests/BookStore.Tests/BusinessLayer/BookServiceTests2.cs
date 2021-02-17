@@ -26,7 +26,7 @@
 //                return new Book(null, "czwarta", 25);
 //        }
 
-//        public void Update(Book book)
+//        public void UpdateAsync(Book book)
 //        {
             
 //        }
@@ -54,7 +54,7 @@
 //            return null;
 //        }
 
-//        public void Update(Book book)
+//        public void UpdateAsync(Book book)
 //        {
             
 //        }

@@ -13,11 +13,11 @@ namespace BookStore.BusinessLayer
     public interface IAuthorsService
     {
         Task AddAsync(Author author);
-        void Delete(Author author);
+        Task DeleteAsync(Author author);
         Author Get(int authorId);
         Task<List<Author>> GetAllAsync();
         Task<List<Book>> GetBooksByAuthoSurnameAsync(string surname);
-        void Update(Author author);
+        Task UpdateAsync(Author author);
     }
 
     public class AuthorsService : IAuthorsService
@@ -78,21 +78,21 @@ namespace BookStore.BusinessLayer
             }
         }
 
-        public void Update(Author author)
+        public async Task UpdateAsync(Author author)
         {
             using (var context = _bookStoresDbContextFactoryMethod())
             {
                 context.Authors.Update(author);
-                context.SaveChanges();
+                await context.SaveChangesAsync();
             }
         }
 
-        public void Delete(Author author)
+        public async Task DeleteAsync(Author author)
         {
             using (var context = _bookStoresDbContextFactoryMethod())
             {
                 context.Authors.Remove(author);
-                context.SaveChanges();
+                await context.SaveChangesAsync();
             }
         }
     }

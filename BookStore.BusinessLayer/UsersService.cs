@@ -1,12 +1,13 @@
 ﻿using BookStore.DataLayer;
 using BookStore.DataLayer.Models;
 using System;
+using System.Threading.Tasks;
 
 namespace BookStore.BusinessLayer
 {
     public interface IUsersService
     {
-        void Add(User user);
+        Task AddAsync(User user);
     }
 
     public class UsersService : IUsersService
@@ -19,12 +20,12 @@ namespace BookStore.BusinessLayer
             _bookStoresDbContextFactoryMethod = bookStoresDbContextFactoryMethod;
         }
 
-        public void Add(User user)
+        public async Task AddAsync(User user)
         {
             using (var context = _bookStoresDbContextFactoryMethod())
             {
                 context.Users.Add(user);
-                context.SaveChanges();
+                await context.SaveChangesAsync();
             }
         }
     }

@@ -100,9 +100,9 @@ namespace BookStore
             _menu.AddOption(new MenuItem { Key =  7, Action = FindBooksByAuthorSurnameAsync, Description = "Find books by author surname" });
             _menu.AddOption(new MenuItem { Key =  8, Action = AddBookToBookStoreAsync,       Description = "Add book to bookstore" });
             _menu.AddOption(new MenuItem { Key =  9, Action = FindBookInBookStoresAsync,     Description = "Find book in bookstores" });
-            _menu.AddOption(new MenuItem { Key = 10, Action = UpdateAuthor,             Description = "Update author" });
-            _menu.AddOption(new MenuItem { Key = 11, Action = DeleteAuthor,             Description = "Delete author" });
-            _menu.AddOption(new MenuItem { Key = 12, Action = AddUser,                  Description = "Add new user" });
+            _menu.AddOption(new MenuItem { Key = 10, Action = UpdateAuthorAsync,             Description = "UpdateAsync author" });
+            _menu.AddOption(new MenuItem { Key = 11, Action = DeleteAuthorAsync,             Description = "Delete author" });
+            _menu.AddOption(new MenuItem { Key = 12, Action = AddUserAsync,                  Description = "Add new user" });
             _menu.AddOption(new MenuItem { Key = 13, Action = GetRecommendedBookStores, Description = "Get bookstores recommended for users" });
 
             _menu.AddOption(new MenuItem { Key = 30, Action = ExportOfferToFile,        Description = "Export offer to file" });
@@ -149,7 +149,7 @@ namespace BookStore
             //}
         }
 
-        private void AddUser()
+        private async void AddUserAsync()
         {
             var newUser = new User
             {
@@ -159,21 +159,21 @@ namespace BookStore
                 City = _ioHelper.GetTextFromUser("City")
             };
 
-            _usersService.Add(newUser);
+            await _usersService.AddAsync(newUser);
             Console.WriteLine("User added successfully");
         }
 
-        private void DeleteAuthor()
+        private async void DeleteAuthorAsync()
         {
             var id = _ioHelper.GetIntFromUser("Provide author id");
 
             //var author = _authorsService.Get(id);
             //_authorsService.Delete(author);
 
-            _authorsService.Delete(new Author { Id = id });
+            await _authorsService.DeleteAsync(new Author { Id = id });
         }
 
-        private void UpdateAuthor()
+        private async void UpdateAuthorAsync()
         {
             var id = _ioHelper.GetIntFromUser("Provide author id");
 
@@ -182,7 +182,7 @@ namespace BookStore
             author.Name    = _ioHelper.GetTextFromUser($"Privde new name [current: {author.Name}]:");
             author.Surname = _ioHelper.GetTextFromUser($"Privde new surname [current: {author.Surname}]:");
 
-            _authorsService.Update(author);
+           await _authorsService.UpdateAsync(author);
         }
 
         private async void FindBookInBookStoresAsync()

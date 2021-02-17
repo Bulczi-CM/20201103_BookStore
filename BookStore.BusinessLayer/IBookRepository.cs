@@ -8,7 +8,7 @@ namespace BookStore.BusinessLayer
     public interface IBookRepository
     {
         //public Book GetBookById(int id);
-        //void Update(Book book);
+        //void UpdateAsync(Book book);
     }
 
     public class BookRepository : IBookRepository
@@ -32,11 +32,11 @@ namespace BookStore.BusinessLayer
         //    }
         //}
 
-        //public void Update(Book book)
+        //public void UpdateAsync(Book book)
         //{
         //    using(var context = _bookStoresDbContextFactoryMethod())
         //    {
-        //        context.Books.Update(book);
+        //        context.Books.UpdateAsync(book);
 
         //        context.SaveChanges();
         //    }
