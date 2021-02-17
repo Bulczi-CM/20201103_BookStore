@@ -7,12 +7,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace BookStore.BusinessLayer
 {
     public interface IBookStoreService
     {
-        void Add(Bookstore bookStore);
+        Task AddAsync(Bookstore bookStore);
         void AddBookToBookStore(BookStoreBook bookStoreBook);
         List<int> GetAllBookStoresIds();
         List<BookStoreBook> DeserializeOffer(string filePath, SerializationFormat format);
@@ -34,12 +35,12 @@ namespace BookStore.BusinessLayer
             _dbContextFactoryMethod = dbContextFactoryMethod;
         }
 
-        public void Add(Bookstore bookStore)
+        public async Task AddAsync(Bookstore bookStore)
         {
             using (var context = _dbContextFactoryMethod())
             {
                 context.BookStores.Add(bookStore);
-                context.SaveChanges();
+                await context.SaveChangesAsync();
             }
         }
 

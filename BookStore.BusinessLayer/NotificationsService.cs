@@ -1,17 +1,18 @@
 ﻿using BookStore.DataLayer.Models;
 using EventStore.Client;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace BookStore.BusinessLayer
 {
     public interface INotificationsService
     {
-        void NotifyNewBookArrival(Book newBook);
+        Task NotifyNewBookArrivalAsync(Book newBook);
     }
 
     public class NotificationsService : INotificationsService
     {
-        public void NotifyNewBookArrival(Book newBook)
+        public async Task NotifyNewBookArrivalAsync(Book newBook)
         {
             const string stream = "bookstore-newbook-stream";
             const int defaultPort = 2113;
@@ -20,10 +21,10 @@ namespace BookStore.BusinessLayer
 
             using (var client = new EventStoreClient(settings))
             {
-                client.AppendToStreamAsync(
+                await client.AppendToStreamAsync(
                     stream,
                     StreamState.Any,
-                    new[] { GetEventDataFor(newBook) }).Wait();
+                    new[] { GetEventDataFor(newBook) });
             }
         }
 

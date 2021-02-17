@@ -12,7 +12,7 @@ namespace BookStore.BusinessLayer
 {
     public interface IBooksService
     {
-        void AddBook(Book book);
+        Task AddBookAsync(Book book);
         Task<List<Book>> GetAllBooksAsync();
         List<Bookstore> GetBookAvailability(int bookId);
         float SellBooks(Dictionary<int, uint> basket);
@@ -35,12 +35,12 @@ namespace BookStore.BusinessLayer
             _dbContextFactoryMethod = dbContextFactoryMethod;
         }
 
-        public void AddBook(Book book)
+        public async Task AddBookAsync(Book book)
         {
             using (var context = _dbContextFactoryMethod())
             {
                 context.Books.Add(book);
-                context.SaveChanges();
+                await context.SaveChangesAsync();
 
                 _logger.Information("Kupiono książkę!");
             }

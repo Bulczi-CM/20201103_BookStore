@@ -92,8 +92,8 @@ namespace BookStore
         private void RegisterMenuOptions()
         {
             _menu.AddOption(new MenuItem { Key =  1, Action = AddAuthorAsync,                Description = "Add new author" });
-            _menu.AddOption(new MenuItem { Key =  2, Action = AddBook,                  Description = "Add new book" });
-            _menu.AddOption(new MenuItem { Key =  3, Action = AddBookStore,             Description = "Add new bookstore" });
+            _menu.AddOption(new MenuItem { Key =  2, Action = AddBookAsync,                  Description = "Add new book" });
+            _menu.AddOption(new MenuItem { Key =  3, Action = AddBookStoreAsync,             Description = "Add new bookstore" });
             _menu.AddOption(new MenuItem { Key =  4, Action = PrintAllBooksAsync,       Description = "Print all books" });
             _menu.AddOption(new MenuItem { Key =  5, Action = ChangeStockForBookAsync,  Description = "Change stock for book" });
             _menu.AddOption(new MenuItem { Key =  6, Action = SellBooksAsync,           Description = "Sell some books" });
@@ -208,7 +208,7 @@ namespace BookStore
             _bookStoreService.AddBookToBookStore(bookStoreBook);
         }
 
-        private void AddBookStore()
+        private async void AddBookStoreAsync()
         {
             var bookstore = new Bookstore
             {
@@ -216,7 +216,7 @@ namespace BookStore
                 Address = _ioHelper.GetTextFromUser("Enter bookstore address")
             };
 
-            _bookStoreService.Add(bookstore);
+            await _bookStoreService.AddAsync(bookstore);
             Console.WriteLine("BookStore added successfully");
         }
 
@@ -245,11 +245,11 @@ namespace BookStore
             Console.WriteLine("Author added successfully");
         }
 
-        void AddBook()
+        private async void AddBookAsync()
         {
             Console.WriteLine("Creating a book.");
 
-            var authors = _authorsService.GetAll();
+            var authors = await _authorsService.GetAllAsync();
 
             if(authors.Count == 0)
             {
@@ -281,11 +281,11 @@ namespace BookStore
                 CopiesCount = _ioHelper.GetUintFromUser("Enter amount of copies")
             };
 
-            _booksService.AddBook(newBook);
+            await _booksService.AddBookAsync(newBook);
             Console.WriteLine("Book added successfully");
 
             //TODO Move to AddBook
-            _notificationService.NotifyNewBookArrival(newBook);
+            await _notificationService.NotifyNewBookArrivalAsync(newBook);
         }
 
         private async void PrintAllBooksAsync()

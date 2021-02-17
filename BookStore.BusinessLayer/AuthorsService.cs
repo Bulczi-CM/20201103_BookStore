@@ -15,7 +15,7 @@ namespace BookStore.BusinessLayer
         Task AddAsync(Author author);
         void Delete(Author author);
         Author Get(int authorId);
-        List<Author> GetAll();
+        Task<List<Author>> GetAllAsync();
         List<Book> GetBooksByAuthoSurname(string surname);
         void Update(Author author);
     }
@@ -45,11 +45,13 @@ namespace BookStore.BusinessLayer
             Log.Information("Dodawanie autora zajęło {ticksElapsed} sekund.", ticksElapsed);
         }
 
-        public List<Author> GetAll()
+        public async Task<List<Author>> GetAllAsync()
         {
             using (var context = _bookStoresDbContextFactoryMethod())
             {
-                return context.Authors.ToList();
+                return await context.Authors
+                    .AsQueryable()
+                    .ToListAsync();
             }
         }
 
