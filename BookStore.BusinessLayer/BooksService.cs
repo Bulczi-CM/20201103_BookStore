@@ -14,7 +14,7 @@ namespace BookStore.BusinessLayer
     {
         Task AddBookAsync(Book book);
         Task<List<Book>> GetAllBooksAsync();
-        List<Bookstore> GetBookAvailability(int bookId);
+        Task<List<Bookstore>> GetBookAvailabilityAsync(int bookId);
         float SellBooks(Dictionary<int, uint> basket);
         bool UpdateBookQuantity(int bookId, uint quantity);
     }
@@ -94,15 +94,16 @@ namespace BookStore.BusinessLayer
             return true;
         }
 
-        public List<Bookstore> GetBookAvailability(int bookId)
+        public async Task<List<Bookstore>> GetBookAvailabilityAsync(int bookId)
         {
             using (var context = new BookStoresDbContext())
             {
-                return context.BookStoresBooks
+                return await context.BookStoresBooks
                     .Include(bookStoreBook => bookStoreBook.BookStore)
                     .Where(bookStoreBook => bookStoreBook.BookId == bookId)
                     .Select(bookStoreBook => bookStoreBook.BookStore)
-                    .ToList();
+                    .AsQueryable()
+                    .ToListAsync();
             }
         }
 

@@ -14,7 +14,7 @@ namespace BookStore.BusinessLayer
     public interface IBookStoreService
     {
         Task AddAsync(Bookstore bookStore);
-        void AddBookToBookStore(BookStoreBook bookStoreBook);
+        Task AddBookToBookStoreAsync(BookStoreBook bookStoreBook);
         List<int> GetAllBookStoresIds();
         List<BookStoreBook> DeserializeOffer(string filePath, SerializationFormat format);
         //List<BookStoreUserAssignment> GetBookStoresAssignedToUsers();
@@ -44,12 +44,12 @@ namespace BookStore.BusinessLayer
             }
         }
 
-        public void AddBookToBookStore(BookStoreBook bookStoreBook)
+        public async Task AddBookToBookStoreAsync(BookStoreBook bookStoreBook)
         {
             using (var context = _dbContextFactoryMethod())
             {
                 context.BookStoresBooks.Add(bookStoreBook);
-                context.SaveChanges();
+                await context.SaveChangesAsync();
             }
         }
 

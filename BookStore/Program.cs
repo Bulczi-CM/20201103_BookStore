@@ -97,9 +97,9 @@ namespace BookStore
             _menu.AddOption(new MenuItem { Key =  4, Action = PrintAllBooksAsync,       Description = "Print all books" });
             _menu.AddOption(new MenuItem { Key =  5, Action = ChangeStockForBookAsync,  Description = "Change stock for book" });
             _menu.AddOption(new MenuItem { Key =  6, Action = SellBooksAsync,           Description = "Sell some books" });
-            _menu.AddOption(new MenuItem { Key =  7, Action = FindBooksByAuthorSurname, Description = "Find books by author surname" });
-            _menu.AddOption(new MenuItem { Key =  8, Action = AddBookToBookStore,       Description = "Add book to bookstore" });
-            _menu.AddOption(new MenuItem { Key =  9, Action = FindBookInBookStores,     Description = "Find book in bookstores" });
+            _menu.AddOption(new MenuItem { Key =  7, Action = FindBooksByAuthorSurnameAsync, Description = "Find books by author surname" });
+            _menu.AddOption(new MenuItem { Key =  8, Action = AddBookToBookStoreAsync,       Description = "Add book to bookstore" });
+            _menu.AddOption(new MenuItem { Key =  9, Action = FindBookInBookStoresAsync,     Description = "Find book in bookstores" });
             _menu.AddOption(new MenuItem { Key = 10, Action = UpdateAuthor,             Description = "Update author" });
             _menu.AddOption(new MenuItem { Key = 11, Action = DeleteAuthor,             Description = "Delete author" });
             _menu.AddOption(new MenuItem { Key = 12, Action = AddUser,                  Description = "Add new user" });
@@ -185,11 +185,11 @@ namespace BookStore
             _authorsService.Update(author);
         }
 
-        private void FindBookInBookStores()
+        private async void FindBookInBookStoresAsync()
         {
             var bookId = _ioHelper.GetIntFromUser("Provide Book id");
 
-            var bookStores = _booksService.GetBookAvailability(bookId);
+            var bookStores = await _booksService.GetBookAvailabilityAsync(bookId);
 
             foreach(var bookStore in bookStores)
             {
@@ -197,7 +197,7 @@ namespace BookStore
             }
         }
 
-        private void AddBookToBookStore()
+        private async void AddBookToBookStoreAsync()
         {
             var bookStoreBook = new BookStoreBook
             {
@@ -205,7 +205,7 @@ namespace BookStore
                 BookStoreId = _ioHelper.GetIntFromUser("Provide BookStore id")
             };
 
-            _bookStoreService.AddBookToBookStore(bookStoreBook);
+            await _bookStoreService.AddBookToBookStoreAsync(bookStoreBook);
         }
 
         private async void AddBookStoreAsync()
@@ -354,10 +354,10 @@ namespace BookStore
             return index;
         }
 
-        private void FindBooksByAuthorSurname()
+        private async void FindBooksByAuthorSurnameAsync()
         {
             var surname = _ioHelper.GetTextFromUser("Enter author surname");
-            var books = _authorsService.GetBooksByAuthoSurname(surname);
+            var books = await _authorsService.GetBooksByAuthoSurnameAsync(surname);
 
             foreach (var book in books)
             {
