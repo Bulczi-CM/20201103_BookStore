@@ -91,7 +91,7 @@ namespace BookStore
 
         private void RegisterMenuOptions()
         {
-            _menu.AddOption(new MenuItem { Key =  1, Action = AddAuthor,                Description = "Add new author" });
+            _menu.AddOption(new MenuItem { Key =  1, Action = AddAuthorAsync,                Description = "Add new author" });
             _menu.AddOption(new MenuItem { Key =  2, Action = AddBook,                  Description = "Add new book" });
             _menu.AddOption(new MenuItem { Key =  3, Action = AddBookStore,             Description = "Add new bookstore" });
             _menu.AddOption(new MenuItem { Key =  4, Action = PrintAllBooksAsync,       Description = "Print all books" });
@@ -220,7 +220,7 @@ namespace BookStore
             Console.WriteLine("BookStore added successfully");
         }
 
-        void AddAuthor()
+        private async void AddAuthorAsync()
         {
             Console.WriteLine("Creating an author.");
 
@@ -241,7 +241,7 @@ namespace BookStore
                 BirthDate = bday
             };
 
-            _authorsService.Add(newAuthor);
+            await _authorsService.AddAsync(newAuthor);
             Console.WriteLine("Author added successfully");
         }
 

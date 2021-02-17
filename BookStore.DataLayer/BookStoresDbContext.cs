@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace BookStore.DataLayer
 {
@@ -13,7 +15,7 @@ namespace BookStore.DataLayer
         DbSet<BookStoreBook> BookStoresBooks { get; set; }
         DbSet<User> Users { get; set; }
         DatabaseFacade Database { get; }
-
+        Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
         int SaveChanges();
     }
 

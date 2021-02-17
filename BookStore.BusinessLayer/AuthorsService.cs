@@ -6,12 +6,13 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace BookStore.BusinessLayer
 {
     public interface IAuthorsService
     {
-        void Add(Author author);
+        Task AddAsync(Author author);
         void Delete(Author author);
         Author Get(int authorId);
         List<Author> GetAll();
@@ -29,7 +30,7 @@ namespace BookStore.BusinessLayer
             _bookStoresDbContextFactoryMethod = bookStoresDbContextFactoryMethod;
         }
 
-        public void Add(Author author)
+        public async Task AddAsync(Author author)
         {
             var stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -37,7 +38,7 @@ namespace BookStore.BusinessLayer
             using (var context = _bookStoresDbContextFactoryMethod())
             {
                 context.Authors.Add(author);
-                context.SaveChanges();
+                await context.SaveChangesAsync();
             }
 
             long ticksElapsed = stopwatch.ElapsedTicks;
