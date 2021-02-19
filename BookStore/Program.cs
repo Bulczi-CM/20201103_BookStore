@@ -91,17 +91,17 @@ namespace BookStore
 
         private void RegisterMenuOptions()
         {
-            _menu.AddOption(new MenuItem { Key =  1, Action = AddAuthorAsync,                Description = "Add new author" });
-            _menu.AddOption(new MenuItem { Key =  2, Action = AddBook,                  Description = "Add new book" });
-            _menu.AddOption(new MenuItem { Key =  3, Action = AddBookStoreAsync,             Description = "Add new bookstore" });
-            _menu.AddOption(new MenuItem { Key =  4, Action = PrintAllBooksAsync,            Description = "Print all books" });
+        /*Added in WebAPI*/    _menu.AddOption(new MenuItem { Key =  1, Action = AddAuthorAsync,                Description = "Add new author" });
+        /*Added in WebAPI*/    _menu.AddOption(new MenuItem { Key =  2, Action = AddBookAsync,                  Description = "Add new book" });
+        /*Added in WebAPI*/    _menu.AddOption(new MenuItem { Key =  3, Action = AddBookStoreAsync,             Description = "Add new bookstore" });
+        /*Added in WebAPI*/    _menu.AddOption(new MenuItem { Key =  4, Action = PrintAllBooksAsync,            Description = "Print all books" });
             _menu.AddOption(new MenuItem { Key =  5, Action = ChangeStockForBookAsync,       Description = "Change stock for book" });
             _menu.AddOption(new MenuItem { Key =  6, Action = SellBooksAsync,                Description = "Sell some books" });
-            _menu.AddOption(new MenuItem { Key =  7, Action = FindBooksByAuthorSurname, Description = "Find books by author surname" });
-            _menu.AddOption(new MenuItem { Key =  8, Action = AddBookToBookStoreAsync,       Description = "Add book to bookstore" });
+        /*Added in WebAPI*/    _menu.AddOption(new MenuItem { Key =  7, Action = FindBooksByAuthorSurnameAsync, Description = "Find books by author surname" });
+        /*Added in WebAPI*/    _menu.AddOption(new MenuItem { Key =  8, Action = AddBookToBookStoreAsync,       Description = "Add book to bookstore" });
             _menu.AddOption(new MenuItem { Key =  9, Action = FindBookInBookStoresAsync,     Description = "Find book in bookstores" });
-            _menu.AddOption(new MenuItem { Key = 10, Action = UpdateAuthorAsync,             Description = "UpdateAsync author" });
-            _menu.AddOption(new MenuItem { Key = 11, Action = DeleteAuthorAsync,             Description = "Delete author" });
+        /*Added in WebAPI*/    _menu.AddOption(new MenuItem { Key = 10, Action = UpdateAuthorAsync,             Description = "UpdateAsync author" });
+        /*Added in WebAPI*/    _menu.AddOption(new MenuItem { Key = 11, Action = DeleteAuthorAsync,             Description = "Delete author" });
             _menu.AddOption(new MenuItem { Key = 12, Action = AddUserAsync,                  Description = "Add new user" });
             //_menu.AddOption(new MenuItem { Key = 13, Action = GetRecommendedBookStores,      Description = "Get bookstores recommended for users" });
 
@@ -246,11 +246,11 @@ namespace BookStore
             Console.WriteLine("Author added successfully");
         }
 
-        private void AddBook()
+        private async void AddBookAsync()
         {
             Console.WriteLine("Creating a book.");
 
-            var authors = _authorsService.GetAllAsync().Result;
+            var authors = await _authorsService.GetAllAsync();
 
             if(authors.Count == 0)
             {
@@ -282,11 +282,11 @@ namespace BookStore
                 CopiesCount = _ioHelper.GetUintFromUser("Enter amount of copies")
             };
 
-            _booksService.AddBookAsync(newBook).Wait();
+            await _booksService.AddBookAsync(newBook);
             Console.WriteLine("Book added successfully");
 
             //TODO Move to AddBook
-            _notificationService.NotifyNewBookArrivalAsync(newBook);
+            await _notificationService.NotifyNewBookArrivalAsync(newBook);
         }
 
         private async void PrintAllBooksAsync()
@@ -355,7 +355,7 @@ namespace BookStore
             return index;
         }
 
-        private async void FindBooksByAuthorSurname()
+        private async void FindBooksByAuthorSurnameAsync()
         {
             var surname = _ioHelper.GetTextFromUser("Enter author surname");
             var books = await _authorsService.GetBooksByAuthorSurnameAsync(surname);
