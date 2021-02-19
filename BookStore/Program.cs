@@ -92,12 +92,12 @@ namespace BookStore
         private void RegisterMenuOptions()
         {
             _menu.AddOption(new MenuItem { Key =  1, Action = AddAuthorAsync,                Description = "Add new author" });
-            _menu.AddOption(new MenuItem { Key =  2, Action = AddBookAsync,                  Description = "Add new book" });
+            _menu.AddOption(new MenuItem { Key =  2, Action = AddBook,                  Description = "Add new book" });
             _menu.AddOption(new MenuItem { Key =  3, Action = AddBookStoreAsync,             Description = "Add new bookstore" });
             _menu.AddOption(new MenuItem { Key =  4, Action = PrintAllBooksAsync,            Description = "Print all books" });
             _menu.AddOption(new MenuItem { Key =  5, Action = ChangeStockForBookAsync,       Description = "Change stock for book" });
             _menu.AddOption(new MenuItem { Key =  6, Action = SellBooksAsync,                Description = "Sell some books" });
-            _menu.AddOption(new MenuItem { Key =  7, Action = FindBooksByAuthorSurnameAsync, Description = "Find books by author surname" });
+            _menu.AddOption(new MenuItem { Key =  7, Action = FindBooksByAuthorSurname, Description = "Find books by author surname" });
             _menu.AddOption(new MenuItem { Key =  8, Action = AddBookToBookStoreAsync,       Description = "Add book to bookstore" });
             _menu.AddOption(new MenuItem { Key =  9, Action = FindBookInBookStoresAsync,     Description = "Find book in bookstores" });
             _menu.AddOption(new MenuItem { Key = 10, Action = UpdateAuthorAsync,             Description = "UpdateAsync author" });
@@ -246,11 +246,11 @@ namespace BookStore
             Console.WriteLine("Author added successfully");
         }
 
-        private async void AddBookAsync()
+        private void AddBook()
         {
             Console.WriteLine("Creating a book.");
 
-            var authors = await _authorsService.GetAllAsync();
+            var authors = _authorsService.GetAllAsync().Result;
 
             if(authors.Count == 0)
             {
@@ -282,11 +282,11 @@ namespace BookStore
                 CopiesCount = _ioHelper.GetUintFromUser("Enter amount of copies")
             };
 
-            await _booksService.AddBookAsync(newBook);
+            _booksService.AddBookAsync(newBook).Wait();
             Console.WriteLine("Book added successfully");
 
             //TODO Move to AddBook
-            await _notificationService.NotifyNewBookArrivalAsync(newBook);
+            _notificationService.NotifyNewBookArrivalAsync(newBook);
         }
 
         private async void PrintAllBooksAsync()
@@ -355,10 +355,10 @@ namespace BookStore
             return index;
         }
 
-        private async void FindBooksByAuthorSurnameAsync()
+        private async void FindBooksByAuthorSurname()
         {
             var surname = _ioHelper.GetTextFromUser("Enter author surname");
-            var books = await _authorsService.GetBooksByAuthoSurnameAsync(surname);
+            var books = await _authorsService.GetBooksByAuthorSurnameAsync(surname);
 
             foreach (var book in books)
             {

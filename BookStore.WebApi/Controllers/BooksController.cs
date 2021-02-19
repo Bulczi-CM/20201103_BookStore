@@ -12,10 +12,14 @@ namespace BookStore.WebApi.Controllers
     public class BooksController : ControllerBase
     {
         private readonly IBooksService _booksService;
+        private readonly IAuthorsService _authorsService;
 
-        public BooksController(IBooksService booksService)
+        public BooksController(
+            IBooksService booksService,
+            IAuthorsService authorsService)
         {
             _booksService = booksService;
+            _authorsService = authorsService;
         }
 
         [HttpPost]
@@ -29,6 +33,22 @@ namespace BookStore.WebApi.Controllers
             {
                 Console.WriteLine(e.Message);
             }
+        }
+
+        [HttpGet]
+        public async Task<List<Book>> GetAllBooks()
+        {
+            var books = await _booksService.GetAllBooksAsync();
+            return books;
+        }
+
+        //http://localhost:10500/api/books/find?surname=ADFDFDDSFXD&name=pleplepele
+        [HttpGet("find")]
+        public async Task<List<Book>> GetBooksByAuthor([FromQuery] string surname, [FromQuery] string name)
+        {
+            var books = await _authorsService.GetBooksByAuthorSurnameAsync(surname);
+
+            return books;
         }
     }
 }

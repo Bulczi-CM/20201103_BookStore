@@ -16,7 +16,7 @@ namespace BookStore.BusinessLayer
         Task DeleteAsync(Author author);
         Task<Author> GetAsync(int authorId);
         Task<List<Author>> GetAllAsync();
-        Task<List<Book>> GetBooksByAuthoSurnameAsync(string surname);
+        Task<List<Book>> GetBooksByAuthorSurnameAsync(string surname);
         Task UpdateAsync(Author author);
     }
 
@@ -65,18 +65,24 @@ namespace BookStore.BusinessLayer
             }
         }
 
-        public async Task<List<Book>> GetBooksByAuthoSurnameAsync(string surname)
+        public async Task<List<Book>> GetBooksByAuthorSurnameAsync(string surname)
         {
+            List<Book> books;
             using (var context = _bookStoresDbContextFactoryMethod())
             {
-                var books = await context.Books
+                books = await context.Books
                     .Include(book => book.Author)
                     .Where(book => book.Author.Surname == surname)
                     .AsQueryable()
                     .ToListAsync();
-
-                return books;
             }
+
+            foreach (var book in books)
+            {
+                book.Author.Books = null;
+            }
+
+            return books;
         }
 
         public async Task UpdateAsync(Author author)
