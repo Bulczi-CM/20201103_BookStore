@@ -23,5 +23,11 @@ namespace BookStore.WebApi.Controllers
         {
             await _bookStoreService.AddAsync(bookstore);
         }
+
+        [HttpPost("addbook")]
+        public async Task PostBookToBookStore([FromBody] BookStoreBook bookStoreBook)
+        {
+            await _bookStoreService.AddBookToBookStoreAsync(bookStoreBook);
+        }
     }
 }

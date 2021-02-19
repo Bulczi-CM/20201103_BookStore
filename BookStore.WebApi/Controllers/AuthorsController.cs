@@ -24,5 +24,21 @@ namespace BookStore.WebApi.Controllers
         {
             await _authorsService.AddAsync(author);
         }
+
+        [HttpPut("{id}")]
+        public async Task UppdateAuthor([FromBody] Author author, int id)
+        {
+            author.Id = id;
+            await _authorsService.UpdateAsync(author);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task DeleteAuthor(int id)
+        {
+            await _authorsService.DeleteAsync(new Author
+            {
+                Id = id
+            });
+        }
     }
 }
