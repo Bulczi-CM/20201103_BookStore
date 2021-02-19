@@ -1,5 +1,6 @@
 ﻿using BookStore.BusinessLayer;
 using BookStore.DataLayer.Models;
+using BookStore.WebApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -49,6 +50,20 @@ namespace BookStore.WebApi.Controllers
             var books = await _authorsService.GetBooksByAuthorSurnameAsync(surname);
 
             return books;
+        }
+
+        [HttpPost("sell")]
+        public async Task<float> SellBooks([FromBody] Basket basket)
+        {
+            var basketDict = new Dictionary<int, uint>();
+
+            foreach(var item in basket.Items)
+            {
+                basketDict.Add(item.ProductId, item.Count);
+            }
+
+            float cost = await _booksService.SellBooksAsync(basketDict);
+            return cost;
         }
     }
 }

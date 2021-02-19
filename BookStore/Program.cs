@@ -91,32 +91,32 @@ namespace BookStore
 
         private void RegisterMenuOptions()
         {
-        /*Added in WebAPI*/    _menu.AddOption(new MenuItem { Key =  1, Action = AddAuthorAsync,                Description = "Add new author" });
-        /*Added in WebAPI*/    _menu.AddOption(new MenuItem { Key =  2, Action = AddBookAsync,                  Description = "Add new book" });
-        /*Added in WebAPI*/    _menu.AddOption(new MenuItem { Key =  3, Action = AddBookStoreAsync,             Description = "Add new bookstore" });
-        /*Added in WebAPI*/    _menu.AddOption(new MenuItem { Key =  4, Action = PrintAllBooksAsync,            Description = "Print all books" });
-            _menu.AddOption(new MenuItem { Key =  5, Action = ChangeStockForBookAsync,       Description = "Change stock for book" });
-            _menu.AddOption(new MenuItem { Key =  6, Action = SellBooksAsync,                Description = "Sell some books" });
-        /*Added in WebAPI*/    _menu.AddOption(new MenuItem { Key =  7, Action = FindBooksByAuthorSurnameAsync, Description = "Find books by author surname" });
-        /*Added in WebAPI*/    _menu.AddOption(new MenuItem { Key =  8, Action = AddBookToBookStoreAsync,       Description = "Add book to bookstore" });
-            _menu.AddOption(new MenuItem { Key =  9, Action = FindBookInBookStoresAsync,     Description = "Find book in bookstores" });
-        /*Added in WebAPI*/    _menu.AddOption(new MenuItem { Key = 10, Action = UpdateAuthorAsync,             Description = "UpdateAsync author" });
-        /*Added in WebAPI*/    _menu.AddOption(new MenuItem { Key = 11, Action = DeleteAuthorAsync,             Description = "Delete author" });
-            _menu.AddOption(new MenuItem { Key = 12, Action = AddUserAsync,                  Description = "Add new user" });
+        /*Added in WebAPI*/    _menu.AddOption(new MenuItem { Key =  1, Action = AddAuthor,                Description = "Add new author" });
+        /*Added in WebAPI*/    _menu.AddOption(new MenuItem { Key =  2, Action = AddBook,                  Description = "Add new book" });
+        /*Added in WebAPI*/    _menu.AddOption(new MenuItem { Key =  3, Action = AddBookStore,             Description = "Add new bookstore" });
+        /*Added in WebAPI*/    _menu.AddOption(new MenuItem { Key =  4, Action = PrintAllBooks,            Description = "Print all books" });
+            _menu.AddOption(new MenuItem { Key =  5, Action = ChangeStockForBook,       Description = "Change stock for book" });
+        /*Added in WebAPI*/    _menu.AddOption(new MenuItem { Key =  6, Action = SellBooksAsync,                Description = "Sell some books" });
+        /*Added in WebAPI*/    _menu.AddOption(new MenuItem { Key =  7, Action = FindBooksByAuthorSurname, Description = "Find books by author surname" });
+        /*Added in WebAPI*/    _menu.AddOption(new MenuItem { Key =  8, Action = AddBookToBookStore,       Description = "Add book to bookstore" });
+            _menu.AddOption(new MenuItem { Key =  9, Action = FindBookInBookStores,     Description = "Find book in bookstores" });
+        /*Added in WebAPI*/    _menu.AddOption(new MenuItem { Key = 10, Action = UpdateAuthor,             Description = "UpdateAsync author" });
+        /*Added in WebAPI*/    _menu.AddOption(new MenuItem { Key = 11, Action = DeleteAuthor,             Description = "Delete author" });
+            _menu.AddOption(new MenuItem { Key = 12, Action = AddUser,                  Description = "Add new user" });
             //_menu.AddOption(new MenuItem { Key = 13, Action = GetRecommendedBookStores,      Description = "Get bookstores recommended for users" });
 
-            _menu.AddOption(new MenuItem { Key = 30, Action = ExportOfferToFileAsync,        Description = "Export offer to file" });
-            _menu.AddOption(new MenuItem { Key = 31, Action = ImportOfferFromFileAsync,      Description = "Import offer from file" });
+            _menu.AddOption(new MenuItem { Key = 30, Action = ExportOfferToFile,        Description = "Export offer to file" });
+            _menu.AddOption(new MenuItem { Key = 31, Action = ImportOfferFromFile,      Description = "Import offer from file" });
 
             _menu.AddOption(new MenuItem { Key = 99, Action = () => { _exit = true; },  Description = "Close the application" });
         }
 
-        private async void ImportOfferFromFileAsync()
+        private void ImportOfferFromFile()
         {
             var filePath = _ioHelper.GetTextFromUser("Enter file path");
             var format = _ioHelper.GetSerializationFormatFromUser("Choose file format");
 
-            var offer = await _bookStoreService.DeserializeOfferAsync(filePath, format);
+            var offer = _bookStoreService.DeserializeOfferAsync(filePath, format).Result;
 
             foreach(var item in offer)
             {
@@ -124,12 +124,12 @@ namespace BookStore
             }
         }
 
-        private async void ExportOfferToFileAsync()
+        private void ExportOfferToFile()
         {
             var targetPath = _ioHelper.GetTextFromUser("Enter target path");
             var format = _ioHelper.GetSerializationFormatFromUser("Choose file format");
 
-            if (await _bookStoreService.SerializeOfferAsync(targetPath, format))
+            if (_bookStoreService.SerializeOfferAsync(targetPath, format).Result)
             {
                 Console.WriteLine("Offer exported successfully");
             }
@@ -149,7 +149,7 @@ namespace BookStore
         //    //}
         //}
 
-        private async void AddUserAsync()
+        private void AddUser()
         {
             var newUser = new User
             {
@@ -159,37 +159,37 @@ namespace BookStore
                 City = _ioHelper.GetTextFromUser("City")
             };
 
-            await _usersService.AddAsync(newUser);
+            _usersService.AddAsync(newUser).Wait();
             Console.WriteLine("User added successfully");
         }
 
-        private async void DeleteAuthorAsync()
+        private void DeleteAuthor()
         {
             var id = _ioHelper.GetIntFromUser("Provide author id");
 
             //var author = _authorsService.Get(id);
             //_authorsService.Delete(author);
 
-            await _authorsService.DeleteAsync(new Author { Id = id });
+            _authorsService.DeleteAsync(new Author { Id = id }).Wait();
         }
 
-        private async void UpdateAuthorAsync()
+        private void UpdateAuthor()
         {
             var id = _ioHelper.GetIntFromUser("Provide author id");
 
-            var author = await _authorsService.GetAsync(id);
+            var author = _authorsService.GetAsync(id).Result;
 
             author.Name    = _ioHelper.GetTextFromUser($"Privde new name [current: {author.Name}]:");
             author.Surname = _ioHelper.GetTextFromUser($"Privde new surname [current: {author.Surname}]:");
 
-            await _authorsService.UpdateAsync(author);
+            _authorsService.UpdateAsync(author);
         }
 
-        private async void FindBookInBookStoresAsync()
+        private void FindBookInBookStores()
         {
             var bookId = _ioHelper.GetIntFromUser("Provide Book id");
 
-            var bookStores = await _booksService.GetBookAvailabilityAsync(bookId);
+            var bookStores = _booksService.GetBookAvailabilityAsync(bookId).Result;
 
             foreach(var bookStore in bookStores)
             {
@@ -197,7 +197,7 @@ namespace BookStore
             }
         }
 
-        private async void AddBookToBookStoreAsync()
+        private void AddBookToBookStore()
         {
             var bookStoreBook = new BookStoreBook
             {
@@ -205,10 +205,10 @@ namespace BookStore
                 BookStoreId = _ioHelper.GetIntFromUser("Provide BookStore id")
             };
 
-            await _bookStoreService.AddBookToBookStoreAsync(bookStoreBook);
+            _bookStoreService.AddBookToBookStoreAsync(bookStoreBook).Wait();
         }
 
-        private async void AddBookStoreAsync()
+        private void AddBookStore()
         {
             var bookstore = new Bookstore
             {
@@ -216,11 +216,11 @@ namespace BookStore
                 Address = _ioHelper.GetTextFromUser("Enter bookstore address")
             };
 
-            await _bookStoreService.AddAsync(bookstore);
+            _bookStoreService.AddAsync(bookstore).Wait();
             Console.WriteLine("BookStore added successfully");
         }
 
-        private async void AddAuthorAsync()
+        private void AddAuthor()
         {
             Console.WriteLine("Creating an author.");
 
@@ -242,15 +242,15 @@ namespace BookStore
                 BirthDate = bday
             };
 
-            await _authorsService.AddAsync(newAuthor);
+            _authorsService.AddAsync(newAuthor).Wait();
             Console.WriteLine("Author added successfully");
         }
 
-        private async void AddBookAsync()
+        private void AddBook()
         {
             Console.WriteLine("Creating a book.");
 
-            var authors = await _authorsService.GetAllAsync();
+            var authors = _authorsService.GetAllAsync().Result;
 
             if(authors.Count == 0)
             {
@@ -282,16 +282,16 @@ namespace BookStore
                 CopiesCount = _ioHelper.GetUintFromUser("Enter amount of copies")
             };
 
-            await _booksService.AddBookAsync(newBook);
+            _booksService.AddBookAsync(newBook).Wait();
             Console.WriteLine("Book added successfully");
 
             //TODO Move to AddBook
-            await _notificationService.NotifyNewBookArrivalAsync(newBook);
+            _notificationService.NotifyNewBookArrivalAsync(newBook).Wait();
         }
 
-        private async void PrintAllBooksAsync()
+        private void PrintAllBooks()
         {
-            var books = await _booksService.GetAllBooksAsync();
+            var books = _booksService.GetAllBooksAsync().Result;
             PrintBooks(books);
         }
 
@@ -329,12 +329,12 @@ namespace BookStore
             }
         }
 
-        private async void ChangeStockForBookAsync()
+        private void ChangeStockForBook()
         {
-            int index = await GetBookIndexFromUserAsync();
+            int index = GetBookIndexFromUserAsync();
             uint quantity = _ioHelper.GetUintFromUser("Enter new copies count");
 
-            bool success = await _booksService.UpdateBookQuantityAsync(index, quantity);
+            bool success = _booksService.UpdateBookQuantityAsync(index, quantity).Result;
             Console.WriteLine(success ? "Book added successfully" : "Book not added");
 
             //Ternary if
@@ -345,9 +345,9 @@ namespace BookStore
             //    : "Number is smaller or equal 1000";
         }
 
-        private async Task<int> GetBookIndexFromUserAsync()
+        private int GetBookIndexFromUserAsync()
         {
-            List<Book> books = await _booksService.GetAllBooksAsync();
+            List<Book> books = _booksService.GetAllBooksAsync().Result;
 
             PrintBooks(books, true);
 
@@ -355,10 +355,10 @@ namespace BookStore
             return index;
         }
 
-        private async void FindBooksByAuthorSurnameAsync()
+        private void FindBooksByAuthorSurname()
         {
             var surname = _ioHelper.GetTextFromUser("Enter author surname");
-            var books = await _authorsService.GetBooksByAuthorSurnameAsync(surname);
+            var books = _authorsService.GetBooksByAuthorSurnameAsync(surname).Result;
 
             foreach (var book in books)
             {
@@ -366,14 +366,14 @@ namespace BookStore
             }
         }
 
-        private async void SellBooksAsync()
+        private void SellBooksAsync()
         {
             bool exit = false;
             Dictionary<int, uint> basket = new Dictionary<int, uint>();
 
             while (!exit)
             {
-                int index = await GetBookIndexFromUserAsync();
+                int index = GetBookIndexFromUserAsync();
                 uint quantity = _ioHelper.GetUintFromUser("How many copies");
 
                 if (basket.ContainsKey(index))
@@ -388,7 +388,7 @@ namespace BookStore
                 exit = !_ioHelper.GetBoolFromUser("Do you want any other book?");
             }
 
-            float cost = await _booksService.SellBooksAsync(basket);
+            float cost = _booksService.SellBooksAsync(basket).Result;
 
             Console.WriteLine($"Recipt: ${cost}");
         }
